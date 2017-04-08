@@ -10,6 +10,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.CentralController;
+import org.Language;
 import org.Session;
 
 /**
@@ -71,11 +72,15 @@ public class MainMenuController extends CentralUIController implements Initializ
     langBox.getSelectionModel().selectedIndexProperty().addListener(
         new ChangeListener<Number>() {
           public void changed(ObservableValue ov, Number old_value, Number new_value) {
-            // Change the language that's being displayed when the input changes
-            System.out.println(Integer.toString(langBox.getSelectionModel().getSelectedIndex()));
-
-           currLang = (String) langBox.getItems().get((int) new_value);
-           System.out.println(currLang);
+            // Change the language that's being displayed when the input changes\
+            if ("ENGLISH".equals((String) langBox.getItems().get((int) new_value))) {
+              currSession.setLanguage(Language.ENGLISH);
+            } else if ("SPANISH".equals((String) langBox.getItems().get((int) new_value))) {
+              currSession.setLanguage(Language.SPANISH);
+            } else if ("PORTUGUESE".equals((String) langBox.getItems().get((int) new_value))) {
+              currSession.setLanguage(Language.PORTUGESE);
+            }
+            System.out.println(currSession.getLanguage());
           }
         });
   }
