@@ -325,7 +325,7 @@ public class DirectEditController extends CentralUIController implements Initial
   public void logoff () {
     Stage primaryStage = (Stage) DirectEdit.getScene().getWindow();
     try {
-      restartUI(primaryStage);
+      loadScene(primaryStage, "/MainMenu.fxml");
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();

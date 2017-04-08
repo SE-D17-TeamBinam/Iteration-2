@@ -37,8 +37,10 @@ public class CentralUIController {
    * @parameter primaryStage: The main stage of the application
    */
   public void restartUI(Stage primaryStage) throws Exception {
-    loadScene(primaryStage, "/MainMenu.fxml");
+    Parent root = FXMLLoader.load(getClass().getResource("/MainMenu.fxml"));
+    primaryStage.setScene(new Scene(root, 1300, 750));
     primaryStage.setTitle("Faulkner Hospital Kiosk");
+    primaryStage.show();
   }
   /**
    * @parameter primaryStage: The main stage of the application
@@ -47,7 +49,7 @@ public class CentralUIController {
    */
   public void loadScene (Stage primaryStage, String fxmlpath) throws Exception {
     Parent root = FXMLLoader.load(getClass().getResource(fxmlpath));
-    primaryStage.setScene(new Scene(root, primaryStage.getWidth(), primaryStage.getHeight()));
+    primaryStage.setScene(new Scene(root, primaryStage.getWidth() - 16, primaryStage.getHeight() - 16));
     primaryStage.show();
   }
 
