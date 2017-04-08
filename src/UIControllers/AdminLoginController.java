@@ -45,10 +45,9 @@ public class AdminLoginController extends CentralUIController implements Initial
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     /* apply language configs */
-    System.out.println(currLang);
-    Dictionary d = new Dictionary();
-    AdminBack.setText(d.getString("Back", currLang));
-    AdminNameLabel.setText(d.getString("Username", currLang));
+    System.out.println(currSession.getLanguage().toString());
+    AdminBack.setText(dictionary.getString("Back", currSession.getLanguage()));
+    AdminNameLabel.setText(dictionary.getString("Username", currSession.getLanguage()));
   }
 
 
@@ -70,8 +69,7 @@ public class AdminLoginController extends CentralUIController implements Initial
     Stage primaryStage = (Stage) AdminLogin.getScene().getWindow();
     String enteredName = AdminNameField.getText();
     String enteredPass = AdminPassField.getText();
-    CredentialManager cm = new CredentialManager();
-    if (cm.userIsAdmin(enteredName, enteredPass)) {
+    if (credentialManager.userIsAdmin(enteredName, enteredPass))  {
       LoginError.setVisible(false);
       try {
         loadScene(primaryStage, "/DirectEdit.fxml");

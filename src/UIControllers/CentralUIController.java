@@ -1,12 +1,15 @@
 package UIControllers;
 
+import CredentialManager.CredentialManager;
 import java.util.ArrayList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.Dictionary;
 import org.Point;
+import org.Session;
 
 
 public class CentralUIController {
@@ -17,9 +20,18 @@ public class CentralUIController {
     3 for admin map
    */
   protected static int mapViewFlag = 0;
-  protected static String currLang = "ENGLISH";
   public static AnchorPane anchorPane;
   public static ArrayList<Point> globalPoints = new ArrayList<Point>(); // TODO Fix
+  protected static Session currSession;
+  protected static CredentialManager credentialManager;
+  protected static Dictionary dictionary;
+
+
+  public void setSession (Session s) {
+    this.currSession = s;
+    this.credentialManager = s.credentialManager;
+    this.dictionary = s.dictionary;
+  }
   /**
    * Set the stage to the initial scene (main menu)
    * @parameter primaryStage: The main stage of the application
