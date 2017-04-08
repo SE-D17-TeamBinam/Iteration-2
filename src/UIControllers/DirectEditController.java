@@ -1,6 +1,7 @@
 package UIControllers;
 
 import Definitions.Physician;
+import org.Point;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -16,7 +17,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.Point;
 
 /**
  * Created by Leon Zhang on 4/4/2017.

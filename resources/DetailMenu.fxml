@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750" prefWidth="1300" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UIControllers.DetailMenuController">
+  <children>
+      <Pane fx:id="DetailMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750" prefWidth="1300" style="-fx-background-color: #FFFFFF;">
+         <children>
+            <ImageView fx:id="DetailBackground" fitHeight="379.0" fitWidth="1300.0" layoutY="300.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@icons/background_shapte.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="DetailBanner" fitHeight="160.0" fitWidth="1300.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@icons/banner.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="DetailLogo" fitHeight="82.0" fitWidth="496.0" layoutX="410.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@icons/BWFH_logo_rgb.jpg" />
+               </image>
+            </ImageView>
+            <Label fx:id="DetailTitle" alignment="CENTER" contentDisplay="BOTTOM" layoutX="508.0" layoutY="180.0" text="Room Details">
+               <font>
+                  <Font size="48.0" />
+               </font>
+            </Label>
+            <Label fx:id="DetailRoomName" layoutX="300.0" layoutY="300.0" text="Room Name">
+               <font>
+                  <Font size="30.0" />
+               </font></Label>
+            <Label fx:id="DetailRoomFloor" layoutX="192.0" layoutY="450.0" text="Healthcare Providers">
+               <font>
+                  <Font size="30.0" />
+               </font></Label>
+            <Label fx:id="DetailHCProvider" layoutX="398.0" layoutY="375.0" text="Floor">
+               <font>
+                  <Font size="30.0" />
+               </font></Label>
+            <Button fx:id="DetailBack" layoutX="5.0" layoutY="5.0" mnemonicParsing="false" onMouseClicked="#back" prefHeight="75.0" prefWidth="150.0" text="&lt;- Back  ">
+               <font>
+                  <Font size="26.0" />
+               </font>
+            </Button>
+            <Button fx:id="DetailDone" layoutX="1145.0" layoutY="5.0" mnemonicParsing="false" onMouseClicked="#back" prefHeight="75.0" prefWidth="150.0" text="Done">
+               <font>
+                  <Font size="26.0" />
+               </font>
+            </Button>
+            <Label fx:id="DetailNameField" layoutX="505.0" layoutY="300.0" maxWidth="700.0" prefWidth="700.0" text=" ">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+            <Label fx:id="DetailFloorField" layoutX="505.0" layoutY="375.0" maxWidth="700.0" prefWidth="700.0" text=" ">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+            <Label fx:id="DetailHCPField" layoutX="505.0" layoutY="450.0" maxHeight="270.0" maxWidth="700.0" prefHeight="270.0" prefWidth="700.0" text=" ">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

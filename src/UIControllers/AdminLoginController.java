@@ -1,5 +1,9 @@
 package UIControllers;
 
+import javafx.event.Event;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import org.Dictionary;
 import CredentialManager.CredentialManager;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -10,7 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.Dictionary;
 
 /**
  * Created by Leon Zhang on 2017/4/1.
@@ -46,6 +49,16 @@ public class AdminLoginController extends CentralUIController implements Initial
     Dictionary d = new Dictionary();
     AdminBack.setText(d.getString("Back", currLang));
     AdminNameLabel.setText(d.getString("Username", currLang));
+  }
+
+
+  // Detects if a key is pressed when the username, password, or login button are highlighted
+  // If the key pressed is the ENTER key, then it attempts to login with the current input
+  @FXML
+  private void tryLogin(KeyEvent e){
+    if(e.getCode().toString().equals("ENTER")){
+      login();
+    }
   }
 
   /**

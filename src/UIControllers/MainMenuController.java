@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.CentralController;
+import org.Session;
 
 /**
  * Created by Leon Zhang on 2017/4/1.
