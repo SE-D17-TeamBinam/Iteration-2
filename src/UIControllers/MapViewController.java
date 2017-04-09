@@ -117,7 +117,6 @@ public class MapViewController extends CentralUIController implements Initializa
   private double mapReleasedX;
   private double mapReleasedY;
 
-
   // TODO add default zoom/position for map, also make default floor = 1
 
   ////////////////////////
@@ -132,16 +131,19 @@ public class MapViewController extends CentralUIController implements Initializa
   // The currently selected point
   private Point pointFocus = null;
 
+  private ArrayList<Point> secondaryPointFoci = new ArrayList<Point>();
 
   // For drawing the points
   private final double NODE_RADIUS = 15;
-  private final Color NODE_COLOR = new Color(1, 0, 0,1);
+  private final Color NODE_COLOR = new Color(1, 0, 0, 1);
   // For drawing connections between points
   private final double LINE_FILL = 2;
-  private final Color LINE_COLOR = new Color(0,0,0,1);
+  private final Color LINE_COLOR = new Color(0, 0, 0, 1);
 
-  // The radius that a user needs to click within in order to select a node
-  private final double CLICK_SELECTION_RADIUS = 15;
+  private final Color PRIMARY_POINT_FOCUS_COLOR = new Color(1, 1, 0, 1);
+  private final Color SECONDARY_POINT_FOCUS_COLOR = new Color(0, 0, 1, 1);
+
+  private Rectangle selectionRectangle = new Rectangle();
 
   // Tracks whether or not the mouse has been dragged since being pressed down
   private boolean mouseDragged = false;
@@ -150,32 +152,35 @@ public class MapViewController extends CentralUIController implements Initializa
   private HashMap<Point, Circle> circles = new HashMap<Point, Circle>();
   private HashMap<Connection, Line> lines = new HashMap<Connection, Line>();
 
-  private class Connection{
+  // todo separate admin map view from user map view into separate controllers
+  // todo add connection to class diagram
+  private class Connection {
+
     private Point start;
     private Point end;
 
-    public String toString(){
-      return start.toString() + "-" +  end.toString();
+    public String toString() {
+      return start.toString() + "-" + end.toString();
     }
 
-    public Connection(Point start, Point end){
+    public Connection(Point start, Point end) {
       this.start = start;
       this.end = end;
     }
 
-    public Point getStart(){
+    public Point getStart() {
       return start;
     }
 
-    public Point getEnd(){
+    public Point getEnd() {
       return end;
     }
 
     @Override
-    public boolean equals(Object o){
-      if(o.getClass() != this.getClass()){
+    public boolean equals(Object o) {
+      if (o.getClass() != this.getClass()) {
         return false;
-      }else{
+      } else {
         Connection c = (Connection) o;
         boolean b = ((c.getStart().equals(this.getStart()) && c.getEnd().equals(this.getEnd())) ||
             (c.getEnd().equals(this.getStart()) && c.getStart().equals(this.getEnd())));
@@ -183,18 +188,14 @@ public class MapViewController extends CentralUIController implements Initializa
       }
     }
 
-    // Turns out it takes 3 hours of debugging to figure out that hashmap uses hash codes
-    // TODO
+    // TODO - If it turns out that any hash codes are repeating, this needs to change
     @Override
-    public int hashCode(){
+    public int hashCode() {
       // I crie
       // Chances are this won't result in repeats.
       return start.hashCode() + end.hashCode();
     }
-
-
   }
-
 
   //////////////////
   // FXML Methods //
@@ -211,41 +212,55 @@ public class MapViewController extends CentralUIController implements Initializa
     // Adds a circle to show where the mouse is on the map
   }
 
-  private void initializeVisualNodes(){
+  // TODO add cut/copy + paste
+  @FXML
+  private void mapKeyPressed(KeyEvent e) {
+    if (mapViewFlag > 2) {
+      if (e.isControlDown()) {
+        if (e.getCode().toString().equals("C")) {
+          System.out.println("Ctrl + C pressed");
+        }
+        if (e.getCode().toString().equals("X")) {
+          System.out.println("Ctrl + X pressed");
+        }
+        if (e.getCode().toString().equals("V")) {
+          System.out.println("Ctrl + V pressed");
+        }
+      }
+    }
+  }
+
+  private void initializeVisualNodes() {
     // TODO Load in some points
 //    points = ...
     // Points are now in memory as arraylist
     // convert neighbors to connections
 
     // For every point, make its neighbors a connection if it doesn't already exist
-    for(int i = 0; i < points.size(); i++){
+    for (int i = 0; i < points.size(); i++) {
       Point p = points.get(i);
       addVisualNodesForPoint(p);
     }
 
   }
 
-  private void addVisualNodesForPoint(Point p){
+  private void addVisualNodesForPoint(Point p) {
     // For every neighbor, turn it into a connection if it doesn't exist
-    for(int j = 0; j < p.getNeighbors().size(); j++){
+    for (int j = 0; j < p.getNeighbors().size(); j++) {
       Connection c = new Connection(p, p.getNeighbors().get(j));
-        addVisualConnection(c);
+      addVisualConnection(c);
 
     }
     // Now, for every point, create a Circle
     Coordinate coord = pixelToCoordinate(new Coordinate(p.getXCoord(), p.getYCoord()));
-    Circle c = new Circle(coord.getX(), coord.getY(), NODE_RADIUS*current_zoom_scale, NODE_COLOR);
+    Circle c = new Circle(coord.getX(), coord.getY(), NODE_RADIUS * current_zoom_scale, NODE_COLOR);
     circles.put(p, c);
     mapViewPane.getChildren().add(c);
     addCircleListeners(c, p);
   }
 
-  private void addVisualPoint(Point p){
-
-  }
-
-  private void addVisualConnection(Connection c){
-    if(!connections.contains(c)) {
+  private void addVisualConnection(Connection c) {
+    if (!connections.contains(c)) {
       connections.add(c);
       Line l = new Line();
       lines.put(c, l);
@@ -257,24 +272,24 @@ public class MapViewController extends CentralUIController implements Initializa
   }
 
   // Updates the points' and connections' to account for zoom
-  private void updateVisualNodes(){
-    for(Point p1 : circles.keySet()){
+  private void updateVisualNodes() {
+    for (Point p1 : circles.keySet()) {
       updateCircleForPoint(p1);
     }
-    for(Connection c1 : lines.keySet()){
+    for (Connection c1 : lines.keySet()) {
       updateLineForConnection(c1);
     }
   }
 
-  private void updateLinesForPoint(Point p){
+  private void updateLinesForPoint(Point p) {
     ArrayList<Point> neighbors = p.getNeighbors();
-    for(int i = 0; i < neighbors.size(); i++){
+    for (int i = 0; i < neighbors.size(); i++) {
       Connection c = new Connection(p, neighbors.get(i));
       updateLineForConnection(c);
     }
   }
 
-  private void updateLineForConnection(Connection c){
+  private void updateLineForConnection(Connection c) {
     Line l = lines.get(c);
     Point start = c.getStart();
     Point end = c.getEnd();
@@ -284,46 +299,64 @@ public class MapViewController extends CentralUIController implements Initializa
     l.setStartY(startCoord.getY());
     l.setEndX(endCoord.getX());
     l.setEndY(endCoord.getY());
-    l.setStrokeWidth(LINE_FILL*current_zoom_scale);
+    l.setStrokeWidth(LINE_FILL * current_zoom_scale);
   }
 
-  private void updateCircleForPoint(Point p){
+  private void updateCircleForPoint(Point p) {
     Coordinate coord = pixelToCoordinate(new Coordinate(p.getXCoord(), p.getYCoord()));
     Circle c = circles.get(p);
     c.setCenterX(coord.getX());
     c.setCenterY(coord.getY());
-    c.setRadius(NODE_RADIUS*current_zoom_scale);
+    c.setRadius(NODE_RADIUS * current_zoom_scale);
   }
 
-  private void removeVisualConnection(Connection c){
+  private void removeVisualConnection(Connection c) {
     mapViewPane.getChildren().remove(lines.get(c));
     connections.remove(c);
     lines.remove(c);
   }
 
-  private void addCircleListeners(Circle c, Point p){
+  private void addCircleListeners(Circle c, Point p) {
     c.setCursor(Cursor.HAND);
-    c.setOnMouseClicked(e -> circleMouseClicked(e, p));
-    c.setOnMouseDragged(e -> circleMouseDragged(e, p));
-    c.setOnMousePressed(e -> circleMousePressed(e, p));
-    c.setOnMouseReleased(e -> circleMouseReleased(e, p));
-    c.setOnMouseDragReleased(e -> circleMouseDragReleased(e, p));
-
-    c.setOnMouseEntered(e -> circleMouseEntered(e, p));
+    c.setOnMouseClicked(e -> circleMouseClicked(e, p, c));
+    c.setOnMouseDragged(e -> circleMouseDragged(e, p, c));
+    c.setOnMousePressed(e -> circleMousePressed(e, p, c));
+    c.setOnMouseReleased(e -> circleMouseReleased(e, p, c));
+    c.setOnMouseEntered(e -> circleMouseEntered(e, p, c));
+    c.setOnScroll(e -> circleMouseScrolled(e, p, c));
   }
-  private void circleMouseEntered(MouseEvent e, Point p) {
+
+  private void circleMouseScrolled(ScrollEvent e, Point p, Circle c) {
+    mapMouseScrolled(e);
+  }
+
+  private void circleMouseEntered(MouseEvent e, Point p, Circle c) {
 //    System.out.println("Mouse entered");
 
   }
-  private void circleMousePressed(MouseEvent e, Point p) {
+
+  private void circleMousePressed(MouseEvent e, Point p, Circle c) {
 //    System.out.println("Mouse entered");
+    String button = e.getButton().toString();
+    if (button.equals("PRIMARY")) {
+      if (mapViewFlag > 2) {
+        c.setCursor(Cursor.CLOSED_HAND);
+      }
+    }
     mouseDragged = false;
   }
-  private void circleMouseClicked(MouseEvent e, Point p) {
-    if(!mouseDragged) { // if it was dragged, then it's not a click
-    String button = e.getButton().toString();
+
+  private void circleMouseClicked(MouseEvent e, Point p, Circle c) {
+    if (!mouseDragged) { // if it was dragged, then it's not a click
+      String button = e.getButton().toString();
       if (button.equals("PRIMARY")) {
-        setPointFocus(p);
+        if (mapViewFlag > 2) {
+          if (e.isControlDown()) {
+            togglePointToSecondarySelection(p);
+          } else {
+            setPointFocus(p);
+          }
+        }
       } else if (button.equals("SECONDARY")) {
         if (e.isShiftDown()) {
           if (mapViewFlag > 2) {
@@ -338,30 +371,65 @@ public class MapViewController extends CentralUIController implements Initializa
     }
 
   }
-  private void circleMouseDragged(MouseEvent e, Point p) {
+
+  private void togglePointToSecondarySelection(Point p) {
+    if (p.equals(pointFocus)) {
+      setPointFocus(null);
+    }
+    if (!secondaryPointFoci.contains(p)) {
+      secondaryPointFoci.add(p);
+      circles.get(p).setFill(SECONDARY_POINT_FOCUS_COLOR);
+    } else {
+      secondaryPointFoci.remove(p);
+      circles.get(p).setFill(NODE_COLOR);
+    }
+  }
+
+
+  private void circleMouseDragged(MouseEvent e, Point p, Circle c) {
 //    System.out.println("Mouse dragged");
     mouseDragged = true;
     String button = e.getButton().toString();
-    if(button.equals("PRIMARY")){
-    if(mapViewFlag > 2) {
-      Coordinate c = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
-      movePoint(p, c);
+    if (button.equals("PRIMARY")) {
+      if (mapViewFlag > 2) {
+        // control + drag on a circle means dragging all selected circles
+        if (e.isControlDown()) {
+          if (p.equals(pointFocus)) {
+            setPointFocus(null);
+          }
+          if (!secondaryPointFoci.contains(p)) {
+            secondaryPointFoci.add(p);
+            circles.get(p).setFill(SECONDARY_POINT_FOCUS_COLOR);
+          }
+          Coordinate c1 = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
+          Coordinate c2 = new Coordinate(p.getXCoord(), p.getYCoord());
+          for (Point p2 : secondaryPointFoci) {
+            p2.setXCoord(p2.getXCoord() + c1.getX() - c2.getX());
+            p2.setYCoord(p2.getYCoord() + c1.getY() - c2.getY());
+            updateCircleForPoint(p2);
+            updateLinesForPoint(p2);
+          }
 
-    }
-    }else if(button.equals("SECONDARY")){
+        } else {
+          Coordinate c1 = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
+          movePoint(p, c1);
+        }
+
+      }
+    } else if (button.equals("SECONDARY")) {
 
     }
   }
 
-  private void movePoint(Point p, Coordinate c){
-    if(c.getX() > mapImage.getImage().getWidth()){
+  private void movePoint(Point p, Coordinate c) {
+    if (c.getX() > mapImage.getImage().getWidth()) {
       c.setX(mapImage.getImage().getWidth());
-    }else if(c.getX() < 0){
+    } else if (c.getX() < 0) {
       c.setX(0);
     }
-    if(c.getY() > mapImage.getImage().getHeight()){
+    if (c.getY() > mapImage.getImage().getHeight()) {
       c.setY(mapImage.getImage().getHeight());
-    }else if(c.getY() < 0){
+    } else if (c.getY() < 0) {
       c.setY(0);
     }
     p.setXCoord(c.getX());
@@ -370,13 +438,9 @@ public class MapViewController extends CentralUIController implements Initializa
     updateLinesForPoint(p);
   }
 
-  private void circleMouseReleased(MouseEvent e, Point p) {
+  private void circleMouseReleased(MouseEvent e, Point p, Circle c) {
 //    System.out.println("Mouse released");
-
-  }
-  private void circleMouseDragReleased(MouseEvent e, Point p) {
-//    System.out.println("Mouse drag released");
-
+    c.setCursor(Cursor.HAND);
   }
 
 
@@ -414,18 +478,18 @@ public class MapViewController extends CentralUIController implements Initializa
     anchorPane.heightProperty().addListener(windowWidthListener);
     if (mapViewFlag != 3) {
       adminPane.setVisible(false);
-    }else{
+    } else {
       fixZoomPanePos();
     }
   }
 
   // Fixes the location of the zoom buttons and label, vertically and horizontally
   private void fixZoomPanePos() {
-      setZoomPaneY(
-          anchorPane.getHeight() - zoomPane.getPrefHeight() - ZOOM_PANE_OFFSET_VERTICAL);
-      setZoomPaneX(
-          anchorPane.getWidth() - zoomPane.getPrefWidth() - ZOOM_PANE_OFFSET_HORIZONTAL
-              - adminPaneRectangle.getWidth() * (adminPane.isVisible() ? 1 : 0));
+    setZoomPaneY(
+        anchorPane.getHeight() - zoomPane.getPrefHeight() - ZOOM_PANE_OFFSET_VERTICAL);
+    setZoomPaneX(
+        anchorPane.getWidth() - zoomPane.getPrefWidth() - ZOOM_PANE_OFFSET_HORIZONTAL
+            - adminPaneRectangle.getWidth() * (adminPane.isVisible() ? 1 : 0));
   }
 
   // Change the zoom pane's horizontal location
@@ -441,12 +505,12 @@ public class MapViewController extends CentralUIController implements Initializa
   // Stress Test for displaying points.
   private void addRandomNodes(int count) {
     Point point = null;
-    for(int i = 0; i < count; i++){
-      double xCoord = Math.random()*5000;
-      double yCoord = Math.random()*2500;
+    for (int i = 0; i < count; i++) {
+      double xCoord = Math.random() * 5000;
+      double yCoord = Math.random() * 2500;
       Point newPoint = new Point(xCoord, yCoord, 4);
       newPoint.setName("");
-      if(point == null){
+      if (point == null) {
       } else {
         newPoint.connectTo(point);
       }
@@ -488,13 +552,13 @@ public class MapViewController extends CentralUIController implements Initializa
   }
 
   @FXML
-  private void saveMapButtonClicked(){
+  private void saveMapButtonClicked() {
     // send the current state of the map
     // update_nodes(points); // maybe Controller.update_nodes(points);
     globalPoints = points;
   }
 
-  public void getMap(){
+  public void getMap() {
     points = globalPoints;
     startNodeBox.getItems().setAll(points);
     endNodeBox.getItems().setAll(points);
@@ -514,39 +578,64 @@ public class MapViewController extends CentralUIController implements Initializa
   }
 
   @FXML
-  private void xCoordFieldKeyTyped(KeyEvent e){
-    if(!Character.isDigit(e.getCharacter().charAt(0))){
+  private void xCoordFieldKeyTyped(KeyEvent e) {
+    if (!Character.isDigit(e.getCharacter().charAt(0))) {
       e.consume(); // throws out the KeyEvent before it can reach the text field
+    } else {
+      xCoordField.appendText(e.getCharacter());
+      e.consume();
+    }
+    updateSelected();
+  }
+
+  private void updateSelected() {
+    if (pointFocus != null) {
+      pointFocus
+          .setXCoord(xCoordField.getText() == "" ? 0 : Double.parseDouble(xCoordField.getText()));
+      pointFocus
+          .setYCoord(yCoordField.getText() == "" ? 0 : Double.parseDouble(yCoordField.getText()));
+      pointFocus.setFloor(floorField.getText() == "" ? 0 : Integer.parseInt(floorField.getText()));
+      pointFocus.setName(nameField.getText());
+      movePoint(pointFocus, new Coordinate(pointFocus.getXCoord(), pointFocus.getYCoord()));
     }
   }
 
   @FXML
-  private void yCoordFieldKeyTyped(KeyEvent e){
-    if(!Character.isDigit(e.getCharacter().charAt(0))){
+  private void yCoordFieldKeyTyped(KeyEvent e) {
+    if (!Character.isDigit(e.getCharacter().charAt(0))) {
       e.consume(); // throws out the KeyEvent before it can reach the text field
+    } else {
+      yCoordField.appendText(e.getCharacter());
+      e.consume();
     }
+    updateSelected();
   }
 
   @FXML
-  private void floorFieldKeyTyped(KeyEvent e){
-    if(!Character.isDigit(e.getCharacter().charAt(0))){
+  private void floorFieldKeyTyped(KeyEvent e) {
+    if (!Character.isDigit(e.getCharacter().charAt(0))) {
       e.consume(); // throws out the KeyEvent before it can reach the text field
+    } else {
+      floorField.appendText(e.getCharacter());
+      e.consume();
     }
+    updateSelected();
   }
 
   @FXML
-  private void nameFieldKeyTyped(KeyEvent e){
-
+  private void nameFieldKeyTyped(KeyEvent e) {
+    nameField.appendText(e.getCharacter());
+    e.consume();
+    updateSelected();
   }
 
   @FXML
   public void deleteButtonClicked() {
     // Clone the neighbors so that data isn't lost when a neighbor is removed
     ArrayList<Point> neighbors = (ArrayList<Point>) pointFocus.getNeighbors().clone();
-    for(Point p : neighbors){
-      System.out.println("Neighbors' neighbors: " + p.getNeighbors());
+    for (Point p : neighbors) {
       Connection c = new Connection(pointFocus, p);
-      p.getNeighbors().remove(pointFocus);
+      p.getNeighbors().remove(pointFocus); // TODO should be replaced by a method
       pointFocus.getNeighbors().remove(p);
       removeVisualConnection(c);
     }
@@ -555,7 +644,6 @@ public class MapViewController extends CentralUIController implements Initializa
     circles.remove(pointFocus);
     setPointFocus(null);
   }
-
 
 
   @FXML
@@ -585,7 +673,6 @@ public class MapViewController extends CentralUIController implements Initializa
     }
   }
 
-
   @FXML
   private void mapMouseDragged(MouseEvent e) {
     mapMouseMoved(e); // TODO REMOVE ?
@@ -594,21 +681,27 @@ public class MapViewController extends CentralUIController implements Initializa
     if (buttonUsed.equals("SECONDARY")) {
 
     } else {
-      mapImage.setCursor(Cursor.CLOSED_HAND);
-      double newX = e.getSceneX() - difX;
-      double newY = e.getSceneY() - difY;
-      moveMapImage(newX, newY);
+      // If control is down, draw a rectangle from the starting point to the current cursor location
+      if (e.isControlDown()) {
+        selectionRectangle.setVisible(true);
+      } else {
+        selectionRectangle.setVisible(false);
+        mapImage.setCursor(Cursor.CLOSED_HAND);
+        double newX = e.getSceneX() - difX;
+        double newY = e.getSceneY() - difY;
+        moveMapImage(newX, newY);
+      }
     }
   }
 
-  public Point getNearestPointWithinRadius(Coordinate coord, double radius){
+  public Point getNearestPointWithinRadius(Coordinate coord, double radius) {
     Point closestPoint = null;
     double closestDistance = Double.MAX_VALUE;
-    for(int i = 0; i < points.size(); i++){
+    for (int i = 0; i < points.size(); i++) {
       Point curP = points.get(i);
       Coordinate curPos = new Coordinate(curP.getXCoord(), curP.getYCoord());
       double curDist = curPos.distanceTo(coord);
-      if(curDist < closestDistance && curDist < radius){
+      if (curDist < closestDistance && curDist < radius) {
         closestPoint = curP;
         closestDistance = curDist;
       }
@@ -621,12 +714,15 @@ public class MapViewController extends CentralUIController implements Initializa
     String buttonUsed = e.getButton().name();
     mouseDragged = false;
     if (buttonUsed.equals("SECONDARY")) {
-      if(mapViewFlag == 3) {
-        Coordinate eventCoord = new Coordinate(e.getSceneX(), e.getSceneY());
-        setPointFocus(getNearestPointWithinRadius(eventCoord, CLICK_SELECTION_RADIUS));
+      if (mapViewFlag == 3) {
       }
     } else {
-      // Drag, or initiate connection of a node
+      if (mapViewFlag == 3) {
+        if (e.isControlDown()) {
+          selectionRectangle.setX(e.getX());
+          selectionRectangle.setY(e.getY());
+        }
+      }
       mapPressedX = e.getSceneX();
       mapPressedY = e.getSceneY();
       difX = mapPressedX - mapViewPane.getLayoutX();
@@ -637,14 +733,9 @@ public class MapViewController extends CentralUIController implements Initializa
   @FXML
   private void mapMouseReleased(MouseEvent e) {
     String buttonUsed = e.getButton().name();
-    if(buttonUsed.equals("SECONDARY")){
-      if(mapViewFlag == 3) {
-        // Connect any node that qualifies
-//        Point p = getNearestPointWithinRadius(new Coordinate(e.getSceneX(), e.getSceneY()),
-//            CLICK_SELECTION_RADIUS);
-//        if (p != null && pointFocus != null) {
-//          p.connectTo(pointFocus);
-//        }
+    if (buttonUsed.equals("SECONDARY")) {
+      if (mapViewFlag == 3) {
+
       }
     }
     mapImage.setCursor(Cursor.DEFAULT);
@@ -665,40 +756,56 @@ public class MapViewController extends CentralUIController implements Initializa
   @FXML
   private void mapMouseClicked(MouseEvent e) {
     String buttonUsed = e.getButton().name();
-//    Coordinate c = new Coordinate(e.getX(), e.getY());
-//    c = coordinateToPixel(c);
-//    System.out.println("X: " + c.getX() + " Y: " + c.getY());
-    if(!mouseDragged) {
-      if(buttonUsed.equals("SECONDARY")){
+    if (!mouseDragged) {
+      if (buttonUsed.equals("SECONDARY")) {
+        if (mapViewFlag > 2) {
+          if (e.isShiftDown()) {
+            for (Point p : secondaryPointFoci) {
+              if (!p.equals(pointFocus) && !p.getNeighbors().contains(pointFocus)) {
+                p.connectTo(pointFocus);
+                addVisualConnection(new Connection(p, pointFocus));
+              }
+            }
+          }
+        }
 
       } else {
+        setPointFocus(null);
         if (mapViewFlag == 3) {
-          if(e.isShiftDown()) {
+          if (e.isShiftDown()) {
             Coordinate c = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
             Point p = new Point(c.getX(), c.getY(), (int) floorChoiceBox.getValue());
             points.add(p);
             addVisualNodesForPoint(p);
             setPointFocus(p);
-          }else{
-            setPointFocus(null);
+          }
+          if (e.isControlDown()) {
+            clearSecondaryPointFoci();
           }
         }
       }
     }
   }
 
+  private void clearSecondaryPointFoci() {
+    // need to clone because foreach doesn't like modification while looping
+    for (Point p : (ArrayList<Point>) secondaryPointFoci.clone()) {
+      circles.get(p).setFill(NODE_COLOR);
+      secondaryPointFoci.remove(p);
+    }
+  }
+
   @FXML
-  private void mapMouseMoved(MouseEvent e){
+  private void mapMouseMoved(MouseEvent e) {
   }
 
   // "scrolled" means the scroll wheel. This method controls zooming with the scroll wheel.
-  // It's also referenced for zooming with buttons.
   @FXML
   private void mapMouseScrolled(ScrollEvent e) {
     changeZoom(e.getDeltaY() > 0);
     // Then update the tracking for cursor location vs image location
     // Prevents odd behavior when dragging and scrolling simultaneously
-    if(mapViewPane.isPressed()){ // only if it's pressed to increase efficiency
+    if (mapViewPane.isPressed()) { // only if it's pressed to increase efficiency
       mapPressedX = e.getSceneX();
       mapPressedY = e.getSceneY();
       difX = mapPressedX - mapViewPane.getLayoutX();
@@ -707,26 +814,36 @@ public class MapViewController extends CentralUIController implements Initializa
   }
 
 
-  private void setPointFocus(Point newFocus){
+  private void setPointFocus(Point newFocus) {
+    if (secondaryPointFoci.contains(newFocus)) {
+      togglePointToSecondarySelection(newFocus);
+    }
+    if (pointFocus != null) {
+      Circle circ = circles.get(pointFocus);
+      if (circ != null) {
+        circ.setFill(NODE_COLOR);
+      }
+    }
     pointFocus = newFocus;
     String xText = "";
     String yText = "";
     String floorText = "";
     String nameText = "";
-    if(newFocus != null) {
+    if (newFocus != null) {
+      circles.get(newFocus).setFill(PRIMARY_POINT_FOCUS_COLOR);
       xText = "" + pointFocus.getXCoord();
       yText = "" + pointFocus.getYCoord();
       floorText = "" + pointFocus.getFloor();
       nameText = pointFocus.getName();
-    }else{
+    } else {
       mapViewPane.requestFocus();
     }
-    if(mapViewFlag > 2) {
+    if (mapViewFlag > 2) {
       xCoordField.setText("" + xText);
       yCoordField.setText("" + yText);
       floorField.setText("" + floorText);
       nameField.setText(nameText);
-      if(nameText == "" && newFocus != null){
+      if (nameText == "" && newFocus != null) {
         nameField.requestFocus();
       }
     }
@@ -734,6 +851,7 @@ public class MapViewController extends CentralUIController implements Initializa
     yLabel.setText("Y Pos: " + yText);
     floorLabel.setText("Floor: " + floorText);
     nameLabel.setText("Room Name: " + nameText);
+
   }
 
   @FXML
@@ -742,7 +860,7 @@ public class MapViewController extends CentralUIController implements Initializa
   ChoiceBox endNodeBox;
 
   @FXML
-  public void drawPathButtonClicked(){
+  public void drawPathButtonClicked() {
     System.out.println("Drawing the path is currently disabled.");
     /*
     DataController controller = new DataController(null); // TODO shouldn't be needed
@@ -757,8 +875,6 @@ public class MapViewController extends CentralUIController implements Initializa
 
   }
 
-
-
   ///////////////////////////
   // Scene Control Methods //
   ///////////////////////////
@@ -770,7 +886,7 @@ public class MapViewController extends CentralUIController implements Initializa
     fixMapDisplayLocation();
   }
 
-  private void fixMapDisplayLocation(){
+  private void fixMapDisplayLocation() {
     // Make sure that the top of the map is above the minimum
     boolean isAbove = mapViewPane.getLayoutY() < map_y_min;
     // Make sure that the bottom of the map is below the maximum
@@ -785,7 +901,7 @@ public class MapViewController extends CentralUIController implements Initializa
     boolean isRight = (mapViewPane.getLayoutX() + mapImage.getFitWidth()) > map_x_max;
     // Make the assertions, move the map
     if (isAbove && isBelow) {
-     // mapViewPane.setLayoutY(mapViewPane.getLayoutY());
+      // mapViewPane.setLayoutY(mapViewPane.getLayoutY());
     } else if (!isAbove && isBelow) {
       mapViewPane.setLayoutY(map_y_min);
     } else if (isAbove && !isBelow) {
@@ -794,7 +910,7 @@ public class MapViewController extends CentralUIController implements Initializa
       // The map is too small, not sure what to do.
     }
     if (isLeft && isRight) {
-     // mapViewPane.setLayoutX(mapViewPane.getLayoutX());
+      // mapViewPane.setLayoutX(mapViewPane.getLayoutX());
     } else if (!isLeft && isRight) {
       mapViewPane.setLayoutX(map_x_min);
     } else if (isLeft && !isRight) {
@@ -808,7 +924,8 @@ public class MapViewController extends CentralUIController implements Initializa
   public Coordinate coordinateToPixel(Coordinate p) {
     double xRelToMapOrigin = p.getX();
     double yRelToMapOrigin = p.getY();
-    return new Coordinate(xRelToMapOrigin/current_zoom_scale, yRelToMapOrigin/current_zoom_scale);
+    return new Coordinate(xRelToMapOrigin / current_zoom_scale,
+        yRelToMapOrigin / current_zoom_scale);
 
   }
 
@@ -830,7 +947,7 @@ public class MapViewController extends CentralUIController implements Initializa
     updateVisualNodes();
   }
 
-  private void updateMapScale(boolean delta){
+  private void updateMapScale(boolean delta) {
     // Find the old dimensions, will be used for making the zooming look better
     double oldWidth = mapImage.getFitWidth();
     double oldHeight = mapImage.getFitHeight();
@@ -838,12 +955,11 @@ public class MapViewController extends CentralUIController implements Initializa
     // How to change zoom in one line
     current_zoom = (delta ?
         (current_zoom >= ZOOM_MAX ? ZOOM_MAX :
-            current_zoom + 1 + ((int) (0 * (current_zoom_scale *=(1 + ZOOM_COEF))))) : // Zoom in
+            current_zoom + 1 + ((int) (0 * (current_zoom_scale *= (1 + ZOOM_COEF))))) : // Zoom in
         (current_zoom <= ZOOM_MIN ? ZOOM_MIN :
             current_zoom - 1 + (int) (0 * (current_zoom_scale /= (1 + ZOOM_COEF))))); // Zoom out
-    mapImage.setFitWidth(current_zoom_scale*mapImage.getImage().getWidth());
-    mapImage.setFitHeight(current_zoom_scale*mapImage.getImage().getHeight());
-
+    mapImage.setFitWidth(current_zoom_scale * mapImage.getImage().getWidth());
+    mapImage.setFitHeight(current_zoom_scale * mapImage.getImage().getHeight());
 
     // Find the new dimensions
     double newWidth = mapImage.getFitWidth();
@@ -853,7 +969,7 @@ public class MapViewController extends CentralUIController implements Initializa
         mapViewPane.getLayoutY() - (newHeight - oldHeight) / 2);
   }
 
-  private void centerMapPixelAtCoordinate(Coordinate pixel, Coordinate target){
+  private void centerMapPixelAtCoordinate(Coordinate pixel, Coordinate target) {
     moveMapImage(mapViewPane.getLayoutX() + target.getX() - pixel.getX(),
         mapViewPane.getLayoutY() + target.getY() - pixel.getY());
   }

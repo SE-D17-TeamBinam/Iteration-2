@@ -19,9 +19,9 @@
             <Image url="@icons/background_shapte.png" />
          </image>
       </ImageView>
-      <Pane fx:id="mapViewPane" layoutX="138.0" layoutY="139.0" prefHeight="200.0" prefWidth="200.0">
+      <Pane fx:id="mapViewPane" layoutX="138.0" layoutY="139.0" onKeyPressed="#mapKeyPressed" prefHeight="200.0" prefWidth="200.0">
          <children>
-            <ImageView fx:id="mapImage" fitHeight="150.0" fitWidth="400.0" onMouseClicked="#mapMouseClicked" onMouseDragged="#mapMouseDragged" onMouseMoved="#mapMouseMoved" onMousePressed="#mapMousePressed" onMouseReleased="#mapMouseReleased" onScroll="#mapMouseScrolled" pickOnBounds="true" />
+            <ImageView fx:id="mapImage" fitHeight="150.0" fitWidth="400.0" onKeyPressed="#mapKeyPressed" onMouseClicked="#mapMouseClicked" onMouseDragged="#mapMouseDragged" onMouseMoved="#mapMouseMoved" onMousePressed="#mapMousePressed" onMouseReleased="#mapMouseReleased" onScroll="#mapMouseScrolled" pickOnBounds="true" />
          </children>
       </Pane>
       <Rectangle fx:id="leftBar" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="750.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="150.0" />
