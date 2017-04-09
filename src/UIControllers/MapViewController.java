@@ -142,6 +142,7 @@ public class MapViewController extends CentralUIController implements Initializa
 
   private final Color PRIMARY_POINT_FOCUS_COLOR = new Color(1, 1, 0, 1);
   private final Color SECONDARY_POINT_FOCUS_COLOR = new Color(0, 0, 1, 1);
+  private final Color SELECTION_RECTANGLE_FILL = new Color(0,0.7,1,0.5);
 
   private Rectangle selectionRectangle = new Rectangle();
 
@@ -205,6 +206,9 @@ public class MapViewController extends CentralUIController implements Initializa
   @FXML
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     addRandomNodes(300);
+    selectionRectangle.setStroke(Color.BLACK);
+    selectionRectangle.setFill(SELECTION_RECTANGLE_FILL);
+    mapViewPane.getChildren().add(selectionRectangle);
     initializeScene();
     initializeChoiceBox();
     initializeMapImage();
@@ -673,6 +677,7 @@ public class MapViewController extends CentralUIController implements Initializa
     }
   }
 
+  // TODO create interface for TextDirections
   @FXML
   private void mapMouseDragged(MouseEvent e) {
     mapMouseMoved(e); // TODO REMOVE ?
@@ -683,7 +688,14 @@ public class MapViewController extends CentralUIController implements Initializa
     } else {
       // If control is down, draw a rectangle from the starting point to the current cursor location
       if (e.isControlDown()) {
-        selectionRectangle.setVisible(true);
+        if(mapViewFlag > 2) {
+          selectionRectangle.setVisible(true);
+          double width = e.getX() - selectionRectangle.getX();
+          double height = e.getY() - selectionRectangle.getY();
+//          selectionRectangle.setX(width > 0 ? width : ) // TODO FINISH
+          selectionRectangle.setWidth(width);
+          selectionRectangle.setHeight(height);
+        }
       } else {
         selectionRectangle.setVisible(false);
         mapImage.setCursor(Cursor.CLOSED_HAND);
@@ -730,9 +742,20 @@ public class MapViewController extends CentralUIController implements Initializa
     }
   }
 
+  // TODO right-click pop-up menu for deleting, copying, connecting points to different floors
+
   @FXML
   private void mapMouseReleased(MouseEvent e) {
     String buttonUsed = e.getButton().name();
+    if(mapViewFlag > 2){
+      if(selectionRectangle.isVisible()){ // if it's visible, then select any nodes in its area
+        double top = selectionRectangle.getY();
+        double bottom = selectionRectangle.getY() + selectionRectangle.getHeight();
+        double left = selectionRectangle.getX();
+        double right = selectionRectangle.getX() + selectionRectangle.getWidth();
+      }
+    }
+    selectionRectangle.setVisible(false);
     if (buttonUsed.equals("SECONDARY")) {
       if (mapViewFlag == 3) {
 
