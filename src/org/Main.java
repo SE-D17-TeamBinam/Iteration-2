@@ -1,5 +1,7 @@
 package org;
 
+import static javafx.application.Application.launch;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 
