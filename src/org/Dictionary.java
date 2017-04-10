@@ -17,115 +17,116 @@ public class Dictionary {
     /* dictionary definition */
     setupDictionary();
     stringEntryMap = new HashMap<String, Entry>();
-    HashMap<Language, String> h = new HashMap<Language, String>();
-    h.put(Language.SPANISH, "Espalda");
-    h.put(Language.ENGLISH, "Back");
-    h.put(Language.PORTUGESE, "Costas");
-    Entry e = new Entry(h);
+
+    HashMap<Language, String> backLabel = new HashMap<Language, String>();
+    backLabel.put(Language.SPANISH, "Espalda");
+    backLabel.put(Language.ENGLISH, "Back");
+    backLabel.put(Language.PORTUGESE, "Costas");
+    Entry e = new Entry(backLabel);
     this.addEntry("Back", e);
 
-    HashMap<Language, String> s = new HashMap<Language, String>();
-    s = new HashMap<Language, String>();
-    s.put(Language.SPANISH, "Nombre de usuario");
-    s.put(Language.ENGLISH, "Username");
-    s.put(Language.PORTUGESE, "Nome de usuário");
-    Entry g = new Entry(s);
+    HashMap<Language, String> usernameLabel = new HashMap<Language, String>();
+    usernameLabel = new HashMap<Language, String>();
+    usernameLabel.put(Language.SPANISH, "Nombre de usuario");
+    usernameLabel.put(Language.ENGLISH, "Username");
+    usernameLabel.put(Language.PORTUGESE, "Nome de usuário");
+    Entry g = new Entry(usernameLabel);
     this.addEntry("Username", g);
 
-    HashMap<Language, String> a = new HashMap<Language, String>();
-    a = new HashMap<Language, String>();
-    a.put(Language.SPANISH, "Contraseña");
-    a.put(Language.ENGLISH, "Password");
-    a.put(Language.PORTUGESE, "Palavra-passe");
-    Entry password = new Entry(a);
+    HashMap<Language, String> passwordLabel = new HashMap<Language, String>();
+    passwordLabel = new HashMap<Language, String>();
+    passwordLabel.put(Language.SPANISH, "Contraseña");
+    passwordLabel.put(Language.ENGLISH, "Password");
+    passwordLabel.put(Language.PORTUGESE, "Palavra-passe");
+    Entry password = new Entry(passwordLabel);
     this.addEntry("Password", password);
 
-    HashMap<Language, String> b = new HashMap<Language, String>();
-    b = new HashMap<Language, String>();
-    b.put(Language.SPANISH, "Mapa");
-    b.put(Language.ENGLISH, "Map");
-    b.put(Language.PORTUGESE, "Mapa");
-    Entry map = new Entry(b);
+    HashMap<Language, String> mapLabel = new HashMap<Language, String>();
+    mapLabel = new HashMap<Language, String>();
+    mapLabel.put(Language.SPANISH, "Mapa");
+    mapLabel.put(Language.ENGLISH, "Map");
+    mapLabel.put(Language.PORTUGESE, "Mapa");
+    Entry map = new Entry(mapLabel);
     this.addEntry("Map", map);
 
-    HashMap<Language, String> c = new HashMap<Language, String>();
-    c = new HashMap<Language, String>();
-    c.put(Language.SPANISH, "iniciar sesión");
-    c.put(Language.ENGLISH, "Login");
-    c.put(Language.PORTUGESE, "iniciar sessão");
-    Entry login = new Entry(c);
+    HashMap<Language, String> loginLabel = new HashMap<Language, String>();
+    loginLabel = new HashMap<Language, String>();
+    loginLabel.put(Language.SPANISH, "iniciar sesión");
+    loginLabel.put(Language.ENGLISH, "Login");
+    loginLabel.put(Language.PORTUGESE, "iniciar sessão");
+    Entry login = new Entry(loginLabel);
     this.addEntry("Login", login);
 
-    HashMap<Language, String> d = new HashMap<Language, String>();
-    d = new HashMap<Language, String>();
-    d.put(Language.SPANISH, "Buscar");
-    d.put(Language.ENGLISH, "Search");
-    d.put(Language.PORTUGESE, "Procurar");
-    Entry search = new Entry(d);
+    HashMap<Language, String> searchLabel = new HashMap<Language, String>();
+    searchLabel = new HashMap<Language, String>();
+    searchLabel.put(Language.SPANISH, "Buscar");
+    searchLabel.put(Language.ENGLISH, "Search");
+    searchLabel.put(Language.PORTUGESE, "Procurar");
+    Entry search = new Entry(searchLabel);
     this.addEntry("Search", search);
 
-    HashMap<Language, String> e1 = new HashMap<Language, String>();
-    e1 = new HashMap<Language, String>();
-    e1.put(Language.SPANISH, "Piso");
-    e1.put(Language.ENGLISH, "Floor");
-    e1.put(Language.PORTUGESE, "Chão");
-    Entry floor = new Entry(e1);
+    HashMap<Language, String> floorLabel = new HashMap<Language, String>();
+    floorLabel = new HashMap<Language, String>();
+    floorLabel.put(Language.SPANISH, "Piso");
+    floorLabel.put(Language.ENGLISH, "Floor");
+    floorLabel.put(Language.PORTUGESE, "Chão");
+    Entry floor = new Entry(floorLabel);
     this.addEntry("Floor", floor);
 
-    HashMap<Language, String> f = new HashMap<Language, String>();
-    f = new HashMap<Language, String>();
-    f.put(Language.SPANISH, "Comienzo");
-    f.put(Language.ENGLISH, "Start");
-    f.put(Language.PORTUGESE, "Começar");
-    Entry start = new Entry(f);
+    HashMap<Language, String> startLabel = new HashMap<Language, String>();
+    startLabel = new HashMap<Language, String>();
+    startLabel.put(Language.SPANISH, "Comienzo");
+    startLabel.put(Language.ENGLISH, "Start");
+    startLabel.put(Language.PORTUGESE, "Começar");
+    Entry start = new Entry(startLabel);
     this.addEntry("Start", start);
 
-    HashMap<Language, String> g1 = new HashMap<Language, String>();
-    g1 = new HashMap<Language, String>();
-    g1.put(Language.SPANISH, "Fin");
-    g1.put(Language.ENGLISH, "End");
-    g1.put(Language.PORTUGESE, "Fim");
-    Entry end = new Entry(g1);
+    HashMap<Language, String> endLabel = new HashMap<Language, String>();
+    endLabel = new HashMap<Language, String>();
+    endLabel.put(Language.SPANISH, "Fin");
+    endLabel.put(Language.ENGLISH, "End");
+    endLabel.put(Language.PORTUGESE, "Fim");
+    Entry end = new Entry(endLabel);
     this.addEntry("End", end);
 
-    HashMap<Language, String> i = new HashMap<Language, String>();
-    i = new HashMap<Language, String>();
-    i.put(Language.SPANISH, "Zoom");
-    i.put(Language.ENGLISH, "Zoom");
-    i.put(Language.PORTUGESE, "Zoom");
-    Entry zoom = new Entry(i);
+    HashMap<Language, String> zoomLabel = new HashMap<Language, String>();
+    zoomLabel = new HashMap<Language, String>();
+    zoomLabel.put(Language.SPANISH, "Zoom");
+    zoomLabel.put(Language.ENGLISH, "Zoom");
+    zoomLabel.put(Language.PORTUGESE, "Zoom");
+    Entry zoom = new Entry(zoomLabel);
     this.addEntry("Zoom", zoom);
 
-    HashMap<Language, String> j = new HashMap<Language, String>();
-    j = new HashMap<Language, String>();
-    j.put(Language.SPANISH, "Seleccionado");
-    j.put(Language.ENGLISH, "Selected");
-    j.put(Language.PORTUGESE, "Seleccionado");
-    Entry selected = new Entry(d);
+    HashMap<Language, String> selectedLabel = new HashMap<Language, String>();
+    selectedLabel = new HashMap<Language, String>();
+    selectedLabel.put(Language.SPANISH, "Seleccionado");
+    selectedLabel.put(Language.ENGLISH, "Selected");
+    selectedLabel.put(Language.PORTUGESE, "Seleccionado");
+    Entry selected = new Entry(searchLabel);
     this.addEntry("Selected", selected);
 
-    HashMap<Language, String> k = new HashMap<Language, String>();
-    k = new HashMap<Language, String>();
-    k.put(Language.SPANISH, "Ir a");
-    k.put(Language.ENGLISH, "Go");
-    k.put(Language.PORTUGESE, "Go");
-    Entry go = new Entry(k);
+    HashMap<Language, String> goLabel = new HashMap<Language, String>();
+    goLabel = new HashMap<Language, String>();
+    goLabel.put(Language.SPANISH, "Ir a");
+    goLabel.put(Language.ENGLISH, "Go");
+    goLabel.put(Language.PORTUGESE, "Go");
+    Entry go = new Entry(goLabel);
     this.addEntry("Go", go);
 
-    HashMap<Language, String> l = new HashMap<Language, String>();
-    l = new HashMap<Language, String>();
-    l.put(Language.SPANISH, "Finalizar");
-    l.put(Language.ENGLISH, "Done");
-    l.put(Language.PORTUGESE, "Concluído");
-    Entry done = new Entry(l);
+    HashMap<Language, String> doneLabel = new HashMap<Language, String>();
+    doneLabel = new HashMap<Language, String>();
+    doneLabel.put(Language.SPANISH, "Finalizar");
+    doneLabel.put(Language.ENGLISH, "Done");
+    doneLabel.put(Language.PORTUGESE, "Concluído");
+    Entry done = new Entry(doneLabel);
     this.addEntry("Done", done);
 
-    HashMap<Language, String> m = new HashMap<Language, String>();
-    m = new HashMap<Language, String>();
-    m.put(Language.SPANISH, "Mostrar en el mapa");
-    m.put(Language.ENGLISH, "Show on Map");
-    m.put(Language.PORTUGESE, "Mostrar no mapa");
-    Entry showOnMap = new Entry(m);
+    HashMap<Language, String> showOnMapLabel = new HashMap<Language, String>();
+    showOnMapLabel = new HashMap<Language, String>();
+    showOnMapLabel.put(Language.SPANISH, "Mostrar en el mapa");
+    showOnMapLabel.put(Language.ENGLISH, "Show on Map");
+    showOnMapLabel.put(Language.PORTUGESE, "Mostrar no mapa");
+    Entry showOnMap = new Entry(showOnMapLabel);
     this.addEntry("Show on Map", showOnMap);
 
     HashMap<Language, String> n = new HashMap<Language, String>();
@@ -136,53 +137,53 @@ public class Dictionary {
     Entry viewInfo = new Entry(n);
     this.addEntry("View Info", viewInfo);
 
-    HashMap<Language, String> o = new HashMap<Language, String>();
-    o = new HashMap<Language, String>();
-    o.put(Language.SPANISH, "Cerrar sesión");
-    o.put(Language.ENGLISH, "Log off");
-    o.put(Language.PORTUGESE, "Terminar sessão");
-    Entry logOff = new Entry(o);
+    HashMap<Language, String> logOffLabel = new HashMap<Language, String>();
+    logOffLabel = new HashMap<Language, String>();
+    logOffLabel.put(Language.SPANISH, "Cerrar sesión");
+    logOffLabel.put(Language.ENGLISH, "Log off");
+    logOffLabel.put(Language.PORTUGESE, "Terminar sessão");
+    Entry logOff = new Entry(logOffLabel);
     this.addEntry("Log off", logOff);
 
-    HashMap<Language, String> p = new HashMap<Language, String>();
-    p = new HashMap<Language, String>();
-    p.put(Language.SPANISH, "Editar Mapa");
-    p.put(Language.ENGLISH, "Edit Map");
-    p.put(Language.PORTUGESE, "Editar Mapa");
-    Entry editMap = new Entry(p);
+    HashMap<Language, String> editMapLabel = new HashMap<Language, String>();
+    editMapLabel = new HashMap<Language, String>();
+    editMapLabel.put(Language.SPANISH, "Editar Mapa");
+    editMapLabel.put(Language.ENGLISH, "Edit Map");
+    editMapLabel.put(Language.PORTUGESE, "Editar Mapa");
+    Entry editMap = new Entry(editMapLabel);
     this.addEntry("Edit Map", editMap);
 
-    HashMap<Language, String> q = new HashMap<Language, String>();
-    q = new HashMap<Language, String>();
-    q.put(Language.SPANISH, "Crear");
-    q.put(Language.ENGLISH, "Create");
-    q.put(Language.PORTUGESE, "Criar");
-    Entry create = new Entry(q);
+    HashMap<Language, String> createLabel = new HashMap<Language, String>();
+    createLabel = new HashMap<Language, String>();
+    createLabel.put(Language.SPANISH, "Crear");
+    createLabel.put(Language.ENGLISH, "Create");
+    createLabel.put(Language.PORTUGESE, "Criar");
+    Entry create = new Entry(createLabel);
     this.addEntry("Create", create);
 
-    HashMap<Language, String> r = new HashMap<Language, String>();
-    r = new HashMap<Language, String>();
-    r.put(Language.SPANISH, "Eliminar");
-    r.put(Language.ENGLISH, "Delete");
-    r.put(Language.PORTUGESE, "Eliminar");
-    Entry delete = new Entry(r);
+    HashMap<Language, String> deleteLabel = new HashMap<Language, String>();
+    deleteLabel = new HashMap<Language, String>();
+    deleteLabel.put(Language.SPANISH, "Eliminar");
+    deleteLabel.put(Language.ENGLISH, "Delete");
+    deleteLabel.put(Language.PORTUGESE, "Eliminar");
+    Entry delete = new Entry(deleteLabel);
     this.addEntry("Delete", delete);
 
-    HashMap<Language, String> t = new HashMap<Language, String>();
-    t = new HashMap<Language, String>();
-    t.put(Language.SPANISH, "Guardar");
-    t.put(Language.ENGLISH, "Save");
-    t.put(Language.PORTUGESE, "Guardar");
-    Entry save = new Entry(q);
+    HashMap<Language, String> saveLabel = new HashMap<Language, String>();
+    saveLabel = new HashMap<Language, String>();
+    saveLabel.put(Language.SPANISH, "Guardar");
+    saveLabel.put(Language.ENGLISH, "Save");
+    saveLabel.put(Language.PORTUGESE, "Guardar");
+    Entry save = new Entry(saveLabel);
     this.addEntry("Save", save);
 
-    HashMap<Language, String> u = new HashMap<Language, String>();
-    u = new HashMap<Language, String>();
-    u.put(Language.SPANISH, "Cancelar");
-    u.put(Language.ENGLISH, "Cancel");
-    u.put(Language.PORTUGESE, "Cancelar");
-    Entry cancel = new Entry(u);
-    this.addEntry("Cancelar", cancel);
+    HashMap<Language, String> cancelLabel = new HashMap<Language, String>();
+    cancelLabel = new HashMap<Language, String>();
+    cancelLabel.put(Language.SPANISH, "Cancelar");
+    cancelLabel.put(Language.ENGLISH, "Cancel");
+    cancelLabel.put(Language.PORTUGESE, "Cancelar");
+    Entry cancel = new Entry(cancelLabel);
+    this.addEntry("Cancel", cancel);
 
     HashMap<Language, String> searchDirectoryLabel = new HashMap<Language, String> ();
     searchDirectoryLabel = new HashMap<Language, String> ();
@@ -223,7 +224,6 @@ public class Dictionary {
     locationsLabel.put(Language.PORTUGESE, "Localizações");
     Entry locations = new Entry(locationsLabel);
     this.addEntry("Locations", locations);
-
 
 
 

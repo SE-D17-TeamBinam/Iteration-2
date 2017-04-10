@@ -157,6 +157,7 @@ public class MapViewController extends CentralUIController implements Initializa
   // TODO LIST
   // todo separate admin map view from user map view into separate controllers
   // TODO add paste functionality
+
   // TODO right-click pop-up menu for deleting, copying, connecting points to different floors
 
 
