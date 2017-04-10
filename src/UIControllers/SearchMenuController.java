@@ -38,6 +38,7 @@ public class SearchMenuController extends CentralUIController implements Initial
   private AnchorPane anchorPane;
 
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    addResolutionListener(anchorPane);
     /* Tests */
     ArrayList<Point> rooms = new ArrayList<Point>();
     ArrayList<Physician> docs = new ArrayList<Physician>();
@@ -83,7 +84,7 @@ public class SearchMenuController extends CentralUIController implements Initial
   public void back () {
     Stage primaryStage = (Stage) SearchDirectory.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/MainMenu.fxml");
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();

@@ -34,27 +34,14 @@ public class MainMenuController extends CentralUIController implements Initializ
 
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     chooseLang();
-
-    anchorPane.widthProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-        System.out.println("Width: " + newSceneWidth);
-      }
-    });
-    anchorPane.heightProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
-        System.out.println("Height: " + newSceneHeight);
-      }
-    });
-
+    addResolutionListener(anchorPane);
   }
 
   public void gotoMap () {
     Stage primaryStage = (Stage) MainMenu.getScene().getWindow();
     try {
       mapViewFlag = 2;
-      loadScene(primaryStage, "/MapScene.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/MapScene.fxml");
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -63,7 +50,7 @@ public class MainMenuController extends CentralUIController implements Initializ
   public void gotoSearch () {
     Stage primaryStage = (Stage) MainMenu.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/SearchMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/SearchMenu.fxml");
     } catch (Exception e) {
     }
   }
@@ -71,7 +58,7 @@ public class MainMenuController extends CentralUIController implements Initializ
   public void gotoAdmin () {
     Stage primaryStage = (Stage) MainMenu.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/AdminLogin.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/AdminLogin.fxml");
     } catch (Exception e) {
     }
   }

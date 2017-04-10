@@ -49,9 +49,9 @@ public class AdminLoginController extends CentralUIController implements Initial
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     /* apply language configs */
-    System.out.println(currSession.getLanguage().toString());
     AdminBack.setText(dictionary.getString("Back", currSession.getLanguage()));
     AdminNameLabel.setText(dictionary.getString("Username", currSession.getLanguage()));
+    addResolutionListener(anchorPane);
   }
 
 
@@ -76,7 +76,7 @@ public class AdminLoginController extends CentralUIController implements Initial
     if (credentialManager.userIsAdmin(enteredName, enteredPass))  {
       LoginError.setVisible(false);
       try {
-        loadScene(primaryStage, "/DirectEdit.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+        loadScene(primaryStage, "/DirectEdit.fxml");
       } catch (Exception e) {
         System.out.println("Cannot load directory editor");
         e.printStackTrace();
@@ -92,7 +92,7 @@ public class AdminLoginController extends CentralUIController implements Initial
   public void back () {
     Stage primaryStage = (Stage) AdminLogin.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/MainMenu.fxml");
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();

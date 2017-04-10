@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
@@ -35,40 +34,72 @@
                   <Font size="26.0" />
                </font>
             </Button>
-            <ListView fx:id="Directory" layoutX="80.0" layoutY="216.0" prefHeight="475.0" prefWidth="572.0" />
-            <TextField fx:id="LastName" layoutX="860.0" layoutY="219.0" />
-            <TextField fx:id="FirstName" layoutX="860.0" layoutY="289.0" />
-            <TextField fx:id="Title" layoutX="860.0" layoutY="359.0" />
-            <ChoiceBox fx:id="Location1" layoutX="860.0" layoutY="429.0" prefHeight="31.0" prefWidth="186.0" />
-            <ChoiceBox fx:id="Location2" layoutX="860.0" layoutY="474.0" prefHeight="31.0" prefWidth="186.0" />
-            <ChoiceBox fx:id="Location3" layoutX="860.0" layoutY="519.0" prefHeight="31.0" prefWidth="186.0" />
-            <ChoiceBox fx:id="Location4" layoutX="860.0" layoutY="564.0" prefHeight="31.0" prefWidth="186.0" />
-            <ChoiceBox fx:id="Location5" layoutX="860.0" layoutY="609.0" prefHeight="31.0" prefWidth="186.0" />
-            <ChoiceBox fx:id="Location6" layoutX="860.0" layoutY="654.0" prefHeight="31.0" prefWidth="186.0" />
-            <Label layoutX="748.0" layoutY="223.0" text="Last Name" />
-            <Label layoutX="748.0" layoutY="293.0" text="First Name" />
-            <Label layoutX="748.0" layoutY="363.0" text="Title" />
-            <Label layoutX="748.0" layoutY="433.0" text="Locations" />
+            <ListView fx:id="Directory" layoutX="80.0" layoutY="216.0" prefHeight="475.0" prefWidth="523.0" />
+            <TextField fx:id="LastName" layoutX="779.0" layoutY="215.0" prefHeight="28.0" prefWidth="230.0">
+               <font>
+                  <Font size="20.0" />
+               </font></TextField>
+            <TextField fx:id="FirstName" layoutX="779.0" layoutY="285.0" prefHeight="28.0" prefWidth="230.0">
+               <font>
+                  <Font size="20.0" />
+               </font></TextField>
+            <TextField fx:id="Title" layoutX="779.0" layoutY="355.0" prefHeight="28.0" prefWidth="230.0">
+               <font>
+                  <Font size="20.0" />
+               </font></TextField>
+            <Label layoutX="650.0" layoutY="222.0" prefHeight="28.0" prefWidth="98.0" text="Last Name">
+               <font>
+                  <Font size="20.0" />
+               </font></Label>
+            <Label layoutX="650.0" layoutY="292.0" prefHeight="28.0" prefWidth="98.0" text="First Name">
+               <font>
+                  <Font size="20.0" />
+               </font></Label>
+            <Label layoutX="650.0" layoutY="362.0" prefHeight="28.0" prefWidth="98.0" text="Title">
+               <font>
+                  <Font size="20.0" />
+               </font></Label>
+            <Label layoutX="650.0" layoutY="432.0" prefHeight="28.0" prefWidth="98.0" text="Locations">
+               <font>
+                  <Font size="20.0" />
+               </font></Label>
             <Button fx:id="DirectLogoff" layoutX="1145.0" layoutY="5.0" mnemonicParsing="false" onMouseClicked="#logoff" prefHeight="75.0" prefWidth="150.0" text="Log off">
                <font>
                   <Font size="26.0" />
                </font>
             </Button>
-            <Button fx:id="DirectSave" layoutX="1165.0" layoutY="609.0" mnemonicParsing="false" onMouseClicked="#save" prefHeight="48.0" prefWidth="111.0" text="Save">
+            <Button fx:id="DirectSave" layoutX="1127.0" layoutY="576.0" mnemonicParsing="false" onMouseClicked="#save" prefHeight="48.0" prefWidth="111.0" text="Save">
                <font>
                   <Font size="20.0" />
                </font>
             </Button>
-            <Button fx:id="DirectCancel" layoutX="1165.0" layoutY="676.0" mnemonicParsing="false" onMouseClicked="#cancel" prefHeight="48.0" prefWidth="111.0" text="Cancel">
+            <Button fx:id="DirectCancel" layoutX="1127.0" layoutY="646.0" mnemonicParsing="false" onMouseClicked="#cancel" prefHeight="48.0" prefWidth="111.0" text="Cancel">
                <font>
                   <Font size="20.0" />
                </font>
             </Button>
-            <Button layoutX="1165.0" layoutY="496.0" mnemonicParsing="false" onMouseClicked="#create" text="Create" />
-            <Button layoutX="1165.0" layoutY="551.0" mnemonicParsing="false" onMouseClicked="#delete" text="Delete" />
-            <Button layoutX="1119.0" layoutY="213.0" mnemonicParsing="false" onMouseClicked="#editMap" text="Edit Map">
+            <Button layoutX="1127.0" layoutY="436.0" mnemonicParsing="false" onMouseClicked="#create" prefHeight="48.0" prefWidth="111.0" text="Create">
                <font>
-                  <Font size="29.0" />
+                  <Font size="20.0" />
+               </font></Button>
+            <Button layoutX="1127.0" layoutY="506.0" mnemonicParsing="false" onMouseClicked="#delete" prefHeight="48.0" prefWidth="111.0" text="Delete">
+               <font>
+                  <Font size="20.0" />
+               </font></Button>
+            <Button layoutX="1089.0" layoutY="209.0" mnemonicParsing="false" onMouseClicked="#editMap" prefHeight="64.0" prefWidth="149.0" text="Edit Map">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <ListView fx:id="Locations" layoutX="779.0" layoutY="425.0" prefHeight="269.0" prefWidth="230.0" />
+            <Button fx:id="AddLocation" layoutX="1025.0" layoutY="435.0" onMouseClicked="#addLocation" mnemonicParsing="false" prefHeight="45.0" prefWidth="45.0" text="+">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="RemoveLocation" layoutX="1025.0" layoutY="492.0" onMouseClicked="#removeLocation" mnemonicParsing="false" prefHeight="45.0" prefWidth="45.0" text="-">
+               <font>
+                  <Font size="20.0" />
                </font>
             </Button>
          </children>
