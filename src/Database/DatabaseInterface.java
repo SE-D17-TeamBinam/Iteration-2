@@ -12,7 +12,7 @@ import org.Point;
 public interface DatabaseInterface {
 
 
-  public void load();
+  public void load() throws SQLException;
 
   void save();
 

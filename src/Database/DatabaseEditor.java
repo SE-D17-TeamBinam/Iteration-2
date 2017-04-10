@@ -10,7 +10,8 @@ import org.Point;
  * Created by evan on 3/25/17.
  * This Object will add, remove and edit our hospital database
  */
-public class DatabaseEditor implements DatabaseInterface{
+public class DatabaseEditor implements DatabaseInterface {
+
   ArrayList<Point> localPoints;
   ArrayList<Physician> localPhysicians;
 
@@ -180,6 +181,7 @@ public class DatabaseEditor implements DatabaseInterface{
             + y + "," + cost + "," + id + "," + floor + ",'" + name + "'); \n");
     return true;
   }
+
   public boolean addPoint(FakePoint point) {
     int cost = point.getCost();
     int x = point.getXCoord();
@@ -213,7 +215,7 @@ public class DatabaseEditor implements DatabaseInterface{
 
   public boolean update_points(ArrayList<Point> rpal) {
     ArrayList<FakePoint> al = new ArrayList<FakePoint>();
-    for (int q = 0; q < rpal.size(); q++){
+    for (int q = 0; q < rpal.size(); q++) {
       al.add(new FakePoint(rpal.get(q)));
     }
     dbc.send_Command("truncate table Point;");
@@ -298,13 +300,13 @@ public class DatabaseEditor implements DatabaseInterface{
     res.close();
     //Now convert to real
     ArrayList<Point> ret = new ArrayList<Point>();
-    for (int i = 0; i < fakepoints.size(); i++){
+    for (int i = 0; i < fakepoints.size(); i++) {
       ret.add(fakepoints.get(i).toRealPoint());
     }
-    for (int i = 0; i < ret.size(); i++){
-      ArrayList<Integer> currentNeighbors = findFakePoint(ret.get(i),fakepoints).getNeighbors();
-      for (int j = 0; j < currentNeighbors.size(); j++){
-        ret.get(i).neighbors.add(findRealPoint(currentNeighbors.get(j),ret));
+    for (int i = 0; i < ret.size(); i++) {
+      ArrayList<Integer> currentNeighbors = findFakePoint(ret.get(i), fakepoints).getNeighbors();
+      for (int j = 0; j < currentNeighbors.size(); j++) {
+        ret.get(i).neighbors.add(findRealPoint(currentNeighbors.get(j), ret));
       }
 
     }
@@ -313,17 +315,18 @@ public class DatabaseEditor implements DatabaseInterface{
   }
 
 
-  private FakePoint findFakePoint(Point p, ArrayList<FakePoint> fps){
-    for (int i = 0; i < fps.size(); i++){
-      if (p.id == fps.get(i).getId()){
+  private FakePoint findFakePoint(Point p, ArrayList<FakePoint> fps) {
+    for (int i = 0; i < fps.size(); i++) {
+      if (p.id == fps.get(i).getId()) {
         return fps.get(i);
       }
     }
     return null;
   }
-  private Point findRealPoint(int p, ArrayList<Point> pts){
-    for (int i = 0; i < pts.size(); i++){
-      if (p == pts.get(i).id){
+
+  private Point findRealPoint(int p, ArrayList<Point> pts) {
+    for (int i = 0; i < pts.size(); i++) {
+      if (p == pts.get(i).id) {
         return pts.get(i);
       }
     }
@@ -349,8 +352,9 @@ public class DatabaseEditor implements DatabaseInterface{
   }
 
   @Override
-  public void load() {
-
+  public void load() throws SQLException{
+    localPhysicians = getAllPhysicians();
+    localPoints = getAllPoints();
   }
 
   @Override
@@ -375,7 +379,13 @@ public class DatabaseEditor implements DatabaseInterface{
 
   @Override
   public ArrayList<Physician> getPhysicians() {
-    return null;
+    try {
+      load();
+    } catch (SQLException e) {
+      System.out.println("Error Getting Data From The Database");
+      e.printStackTrace();
+    }
+    return localPhysicians;
   }
 
   @Override
