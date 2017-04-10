@@ -7,11 +7,9 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -26,10 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javax.sound.midi.Soundbank;
-import javax.swing.Action;
 import org.Point;
 
 /**
@@ -134,8 +129,8 @@ public class MapViewController extends CentralUIController implements Initializa
   private ArrayList<Point> secondaryPointFoci = new ArrayList<Point>();
 
   // For drawing the points
-  private final double NODE_RADIUS = 15;
-  private final Color NODE_COLOR = new Color(1, 0, 0, 1);
+  private final double POINT_RADIUS = 15;
+  private final Color POINT_COLOR = new Color(1, 0, 0, 1);
   // For drawing connections between points
   private final double LINE_FILL = 2;
   private final Color LINE_COLOR = new Color(0, 0, 0, 1);
@@ -144,6 +139,8 @@ public class MapViewController extends CentralUIController implements Initializa
   private final Color SECONDARY_POINT_FOCUS_COLOR = new Color(0, 0, 1, 1);
   private final Color SELECTION_RECTANGLE_FILL = new Color(0,0.7,1,0.5);
 
+  private double selectionRectangleX = 0;
+  private double selectionRectangleY = 0;
   private Rectangle selectionRectangle = new Rectangle();
 
   // Tracks whether or not the mouse has been dragged since being pressed down
@@ -153,8 +150,15 @@ public class MapViewController extends CentralUIController implements Initializa
   private HashMap<Point, Circle> circles = new HashMap<Point, Circle>();
   private HashMap<Connection, Line> lines = new HashMap<Connection, Line>();
 
+
+  // TODO LIST
   // todo separate admin map view from user map view into separate controllers
   // todo add connection to class diagram
+  // TODO add cut/copy + paste
+  // TODO right-click pop-up menu for deleting, copying, connecting points to different floors
+  // TODO box-selection of points
+
+
   private class Connection {
 
     private Point start;
@@ -198,11 +202,14 @@ public class MapViewController extends CentralUIController implements Initializa
     }
   }
 
-  //////////////////
-  // FXML Methods //
-  //////////////////
+  //-----/////////////-----//
+  //-----// Methods //-----//
+  //-----/////////////-----//
 
-  // Initialization
+  ////////////////////
+  // Initialization //
+  ////////////////////
+
   @FXML
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     addRandomNodes(300);
@@ -216,21 +223,42 @@ public class MapViewController extends CentralUIController implements Initializa
     // Adds a circle to show where the mouse is on the map
   }
 
-  // TODO add cut/copy + paste
-  @FXML
-  private void mapKeyPressed(KeyEvent e) {
-    if (mapViewFlag > 2) {
-      if (e.isControlDown()) {
-        if (e.getCode().toString().equals("C")) {
-          System.out.println("Ctrl + C pressed");
-        }
-        if (e.getCode().toString().equals("X")) {
-          System.out.println("Ctrl + X pressed");
-        }
-        if (e.getCode().toString().equals("V")) {
-          System.out.println("Ctrl + V pressed");
-        }
+  // Add listeners for resizing the screen
+  private void initializeScene() {
+    ChangeListener<Number> windowHeightListener = new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth,
+          Number newSceneWidth) {
+        bannerImage.setFitWidth((double) newSceneWidth);
+        map_x_max = (double) newSceneWidth - infoPaneRectangle.getWidth();
+        infoPane.setLayoutX((double) newSceneWidth - infoPaneRectangle.getWidth());
+        adminPane.setLayoutX(infoPane.getLayoutX());
+        titleBanner.setLayoutX(((double) newSceneWidth - titleBanner.getFitWidth()) / 2);
+        fixMapDisplayLocation();
+        fixZoomPanePos();
       }
+    };
+    ChangeListener<Number> windowWidthListener = new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight,
+          Number newSceneHeight) {
+        leftBar.setHeight((double) newSceneHeight);
+
+        map_y_max = (double) newSceneHeight;
+        infoPaneRectangle.setHeight(((double) newSceneHeight - bannerImage.getFitHeight()) / 2);
+        adminPaneRectangle.setHeight(infoPaneRectangle.getHeight());
+        adminPane.setLayoutY(infoPane.getLayoutY() + infoPaneRectangle.getHeight());
+        fixMapDisplayLocation();
+        fixZoomPanePos();
+      }
+    };
+
+    anchorPane.widthProperty().addListener(windowHeightListener);
+    anchorPane.heightProperty().addListener(windowWidthListener);
+    if (mapViewFlag != 3) {
+      adminPane.setVisible(false);
+    } else {
+      fixZoomPanePos();
     }
   }
 
@@ -248,6 +276,36 @@ public class MapViewController extends CentralUIController implements Initializa
 
   }
 
+  // Add values to the floor selector, add a listener, and set its default value
+  private void initializeChoiceBox() {
+    // Add options to change floors
+    floorChoiceBox.getItems().add(1);
+    floorChoiceBox.getItems().add(2);
+    floorChoiceBox.getItems().add(3);
+    floorChoiceBox.getItems().add(4);
+    floorChoiceBox.getItems().add(5);
+    floorChoiceBox.getItems().add(6);
+    floorChoiceBox.getItems().add(7);
+    // Add a ChangeListener to the floorChoiceBox
+    floorChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
+        new ChangeListener<Number>() {
+          public void changed(ObservableValue ov, Number old_value, Number new_value) {
+            // Change the image that's being displayed when the input changes
+            Image new_img = new Image(
+                "/floor_plans/" + (floorChoiceBox.getItems().get((int) new_value))
+                    + "floor.png");
+            mapImage.setImage(new_img);
+//            setPointFocus(null);
+          }
+        });
+    floorChoiceBox.setValue(4);
+  }
+
+  private void initializeMapImage() {
+    mapImage.setFitHeight(mapImage.getImage().getHeight());
+    mapImage.setFitWidth(mapImage.getImage().getWidth());
+  }
+
   private void addVisualNodesForPoint(Point p) {
     // For every neighbor, turn it into a connection if it doesn't exist
     for (int j = 0; j < p.getNeighbors().size(); j++) {
@@ -257,7 +315,8 @@ public class MapViewController extends CentralUIController implements Initializa
     }
     // Now, for every point, create a Circle
     Coordinate coord = pixelToCoordinate(new Coordinate(p.getXCoord(), p.getYCoord()));
-    Circle c = new Circle(coord.getX(), coord.getY(), NODE_RADIUS * current_zoom_scale, NODE_COLOR);
+    Circle c = new Circle(coord.getX(), coord.getY(), POINT_RADIUS * current_zoom_scale,
+        POINT_COLOR);
     circles.put(p, c);
     mapViewPane.getChildren().add(c);
     addCircleListeners(c, p);
@@ -311,7 +370,7 @@ public class MapViewController extends CentralUIController implements Initializa
     Circle c = circles.get(p);
     c.setCenterX(coord.getX());
     c.setCenterY(coord.getY());
-    c.setRadius(NODE_RADIUS * current_zoom_scale);
+    c.setRadius(POINT_RADIUS * current_zoom_scale);
   }
 
   private void removeVisualConnection(Connection c) {
@@ -330,50 +389,23 @@ public class MapViewController extends CentralUIController implements Initializa
     c.setOnScroll(e -> circleMouseScrolled(e, p, c));
   }
 
-  private void circleMouseScrolled(ScrollEvent e, Point p, Circle c) {
-    mapMouseScrolled(e);
-  }
 
-  private void circleMouseEntered(MouseEvent e, Point p, Circle c) {
-//    System.out.println("Mouse entered");
+  private void addPointToSecondarySelection(Point p){
+    if(secondaryPointFoci.contains(p)){
 
-  }
-
-  private void circleMousePressed(MouseEvent e, Point p, Circle c) {
-//    System.out.println("Mouse entered");
-    String button = e.getButton().toString();
-    if (button.equals("PRIMARY")) {
-      if (mapViewFlag > 2) {
-        c.setCursor(Cursor.CLOSED_HAND);
-      }
+    }else{
+      secondaryPointFoci.add(p);
+      circles.get(p).setFill(SECONDARY_POINT_FOCUS_COLOR);
     }
-    mouseDragged = false;
   }
 
-  private void circleMouseClicked(MouseEvent e, Point p, Circle c) {
-    if (!mouseDragged) { // if it was dragged, then it's not a click
-      String button = e.getButton().toString();
-      if (button.equals("PRIMARY")) {
-        if (mapViewFlag > 2) {
-          if (e.isControlDown()) {
-            togglePointToSecondarySelection(p);
-          } else {
-            setPointFocus(p);
-          }
-        }
-      } else if (button.equals("SECONDARY")) {
-        if (e.isShiftDown()) {
-          if (mapViewFlag > 2) {
-            // Ensure that it does not get connected to itself or a repeat connection
-            if (!p.equals(pointFocus) && !p.getNeighbors().contains(pointFocus)) {
-              p.connectTo(pointFocus);
-              addVisualConnection(new Connection(p, pointFocus));
-            }
-          }
-        }
-      }
-    }
+  private void removePointFromSecondarySelection(Point p){
+    if(!secondaryPointFoci.contains(p)){
 
+    }else{
+      secondaryPointFoci.remove(p);
+      circles.get(p).setFill(POINT_COLOR);
+    }
   }
 
   private void togglePointToSecondarySelection(Point p) {
@@ -385,45 +417,59 @@ public class MapViewController extends CentralUIController implements Initializa
       circles.get(p).setFill(SECONDARY_POINT_FOCUS_COLOR);
     } else {
       secondaryPointFoci.remove(p);
-      circles.get(p).setFill(NODE_COLOR);
+      circles.get(p).setFill(POINT_COLOR);
     }
   }
 
+  private void clearSecondaryPointFoci() {
+    // need to clone because foreach doesn't like modification while looping
+    for (Point p : (ArrayList<Point>) secondaryPointFoci.clone()) {
+      circles.get(p).setFill(POINT_COLOR);
+      secondaryPointFoci.remove(p);
+    }
+  }
 
-  private void circleMouseDragged(MouseEvent e, Point p, Circle c) {
-//    System.out.println("Mouse dragged");
-    mouseDragged = true;
-    String button = e.getButton().toString();
-    if (button.equals("PRIMARY")) {
-      if (mapViewFlag > 2) {
-        // control + drag on a circle means dragging all selected circles
-        if (e.isControlDown()) {
-          if (p.equals(pointFocus)) {
-            setPointFocus(null);
-          }
-          if (!secondaryPointFoci.contains(p)) {
-            secondaryPointFoci.add(p);
-            circles.get(p).setFill(SECONDARY_POINT_FOCUS_COLOR);
-          }
-          Coordinate c1 = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
-          Coordinate c2 = new Coordinate(p.getXCoord(), p.getYCoord());
-          for (Point p2 : secondaryPointFoci) {
-            p2.setXCoord(p2.getXCoord() + c1.getX() - c2.getX());
-            p2.setYCoord(p2.getYCoord() + c1.getY() - c2.getY());
-            updateCircleForPoint(p2);
-            updateLinesForPoint(p2);
-          }
-
-        } else {
-          Coordinate c1 = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
-          movePoint(p, c1);
-        }
-
+  private void setPointFocus(Point newFocus) {
+    if (secondaryPointFoci.contains(newFocus)) {
+      togglePointToSecondarySelection(newFocus);
+    }
+    if (pointFocus != null) {
+      Circle circ = circles.get(pointFocus);
+      if (circ != null) {
+        circ.setFill(POINT_COLOR);
       }
-    } else if (button.equals("SECONDARY")) {
-
     }
+    pointFocus = newFocus;
+    String xText = "";
+    String yText = "";
+    String floorText = "";
+    String nameText = "";
+    if (newFocus != null) {
+      circles.get(newFocus).setFill(PRIMARY_POINT_FOCUS_COLOR);
+      xText = "" + pointFocus.getXCoord();
+      yText = "" + pointFocus.getYCoord();
+      floorText = "" + pointFocus.getFloor();
+      nameText = pointFocus.getName();
+    } else {
+      mapViewPane.requestFocus();
+    }
+    if (mapViewFlag > 2) {
+      xCoordField.setText("" + xText);
+      yCoordField.setText("" + yText);
+      floorField.setText("" + floorText);
+      nameField.setText(nameText);
+      if (nameText == "" && newFocus != null) {
+        nameField.requestFocus();
+      }
+    }
+    xLabel.setText("X Pos: " + xText);
+    yLabel.setText("Y Pos: " + yText);
+    floorLabel.setText("Floor: " + floorText);
+    nameLabel.setText("Room Name: " + nameText);
+
   }
+
+
 
   private void movePoint(Point p, Coordinate c) {
     if (c.getX() > mapImage.getImage().getWidth()) {
@@ -442,50 +488,8 @@ public class MapViewController extends CentralUIController implements Initializa
     updateLinesForPoint(p);
   }
 
-  private void circleMouseReleased(MouseEvent e, Point p, Circle c) {
-//    System.out.println("Mouse released");
-    c.setCursor(Cursor.HAND);
-  }
 
 
-  // Add listeners for resizing the screen
-  private void initializeScene() {
-    ChangeListener<Number> windowHeightListener = new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth,
-          Number newSceneWidth) {
-        bannerImage.setFitWidth((double) newSceneWidth);
-        map_x_max = (double) newSceneWidth - infoPaneRectangle.getWidth();
-        infoPane.setLayoutX((double) newSceneWidth - infoPaneRectangle.getWidth());
-        adminPane.setLayoutX(infoPane.getLayoutX());
-        titleBanner.setLayoutX(((double) newSceneWidth - titleBanner.getFitWidth()) / 2);
-        fixMapDisplayLocation();
-        fixZoomPanePos();
-      }
-    };
-    ChangeListener<Number> windowWidthListener = new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight,
-          Number newSceneHeight) {
-        leftBar.setHeight((double) newSceneHeight);
-
-        map_y_max = (double) newSceneHeight;
-        infoPaneRectangle.setHeight(((double) newSceneHeight - bannerImage.getFitHeight()) / 2);
-        adminPaneRectangle.setHeight(infoPaneRectangle.getHeight());
-        adminPane.setLayoutY(infoPane.getLayoutY() + infoPaneRectangle.getHeight());
-        fixMapDisplayLocation();
-        fixZoomPanePos();
-      }
-    };
-
-    anchorPane.widthProperty().addListener(windowHeightListener);
-    anchorPane.heightProperty().addListener(windowWidthListener);
-    if (mapViewFlag != 3) {
-      adminPane.setVisible(false);
-    } else {
-      fixZoomPanePos();
-    }
-  }
 
   // Fixes the location of the zoom buttons and label, vertically and horizontally
   private void fixZoomPanePos() {
@@ -524,72 +528,11 @@ public class MapViewController extends CentralUIController implements Initializa
     }
   }
 
-  // Add values to the floor selector, add a listener, and set its default value
-  private void initializeChoiceBox() {
-    // Add options to change floors
-    floorChoiceBox.getItems().add(1);
-    floorChoiceBox.getItems().add(2);
-    floorChoiceBox.getItems().add(3);
-    floorChoiceBox.getItems().add(4);
-    floorChoiceBox.getItems().add(5);
-    floorChoiceBox.getItems().add(6);
-    floorChoiceBox.getItems().add(7);
-    // Add a ChangeListener to the floorChoiceBox
-    floorChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
-        new ChangeListener<Number>() {
-          public void changed(ObservableValue ov, Number old_value, Number new_value) {
-            // Change the image that's being displayed when the input changes
-            Image new_img = new Image(
-                "/floor_plans/" + (floorChoiceBox.getItems().get((int) new_value))
-                    + "floor.png");
-            mapImage.setImage(new_img);
-//            setPointFocus(null);
-          }
-        });
-    floorChoiceBox.setValue(4);
-  }
-
-
-  private void initializeMapImage() {
-    mapImage.setFitHeight(mapImage.getImage().getHeight());
-    mapImage.setFitWidth(mapImage.getImage().getWidth());
-  }
-
-  @FXML
-  private void saveMapButtonClicked() {
-    // send the current state of the map
-    // update_nodes(points); // maybe Controller.update_nodes(points);
-    globalPoints = points;
-  }
 
   public void getMap() {
     points = globalPoints;
     startNodeBox.getItems().setAll(points);
     endNodeBox.getItems().setAll(points);
-  }
-
-  @FXML
-  public void newButtonClicked() {
-    System.out.println("New Point button is currently disabled");
-    /*
-    double x = Double.parseDouble(xCoordField.getText());
-    double y = Double.parseDouble(yCoordField.getText());
-    int floor = Integer.parseInt(floorField.getText());
-    String name = nameField.getText();
-    Point newPoint = new Point(x, y, floor);
-    addPoint(x, y, floor);
-    */
-  }
-
-  @FXML
-  private void xCoordFieldKeyTyped(KeyEvent e) {
-    if (!Character.isDigit(e.getCharacter().charAt(0))) {
-      e.consume(); // throws out the KeyEvent before it can reach the text field
-    } else {
-      xCoordField.appendText(e.getCharacter());
-      e.consume();
-    }
-    updateSelected();
   }
 
   private void updateSelected() {
@@ -604,107 +547,7 @@ public class MapViewController extends CentralUIController implements Initializa
     }
   }
 
-  @FXML
-  private void yCoordFieldKeyTyped(KeyEvent e) {
-    if (!Character.isDigit(e.getCharacter().charAt(0))) {
-      e.consume(); // throws out the KeyEvent before it can reach the text field
-    } else {
-      yCoordField.appendText(e.getCharacter());
-      e.consume();
-    }
-    updateSelected();
-  }
 
-  @FXML
-  private void floorFieldKeyTyped(KeyEvent e) {
-    if (!Character.isDigit(e.getCharacter().charAt(0))) {
-      e.consume(); // throws out the KeyEvent before it can reach the text field
-    } else {
-      floorField.appendText(e.getCharacter());
-      e.consume();
-    }
-    updateSelected();
-  }
-
-  @FXML
-  private void nameFieldKeyTyped(KeyEvent e) {
-    nameField.appendText(e.getCharacter());
-    e.consume();
-    updateSelected();
-  }
-
-  @FXML
-  public void deleteButtonClicked() {
-    // Clone the neighbors so that data isn't lost when a neighbor is removed
-    ArrayList<Point> neighbors = (ArrayList<Point>) pointFocus.getNeighbors().clone();
-    for (Point p : neighbors) {
-      Connection c = new Connection(pointFocus, p);
-      p.getNeighbors().remove(pointFocus); // TODO should be replaced by a method
-      pointFocus.getNeighbors().remove(p);
-      removeVisualConnection(c);
-    }
-    mapViewPane.getChildren().remove(circles.get(pointFocus));
-    points.remove(pointFocus);
-    circles.remove(pointFocus);
-    setPointFocus(null);
-  }
-
-
-  @FXML
-  public void updateSelectedButtonClicked() {
-    System.out.println("Update Point button is currently disabled.");
-    /*
-    double x = Double.parseDouble(xCoordField.getText());
-    double y = Double.parseDouble(yCoordField.getText());
-    int floor = Integer.parseInt(floorField.getText());
-    String name = nameField.getText();
-    pointFocus.setFloor(floor);
-    pointFocus.setXCoord(x);
-    pointFocus.setYCoord(y);
-    pointFocus.setName(name);
-    */
-  }
-
-  // Navigates back to the main menu
-  @FXML
-  public void backButtonClicked() {
-    Stage primaryStage = (Stage) floorChoiceBox.getScene().getWindow();
-    try {
-      restartUI(primaryStage);
-    } catch (Exception e) {
-      System.out.println("Cannot load main menu");
-      e.printStackTrace();
-    }
-  }
-
-  // TODO create interface for TextDirections
-  @FXML
-  private void mapMouseDragged(MouseEvent e) {
-    mapMouseMoved(e); // TODO REMOVE ?
-    String buttonUsed = e.getButton().name();
-    mouseDragged = true;
-    if (buttonUsed.equals("SECONDARY")) {
-
-    } else {
-      // If control is down, draw a rectangle from the starting point to the current cursor location
-      if (e.isControlDown()) {
-        if(mapViewFlag > 2) {
-          selectionRectangle.setVisible(true);
-          double width = e.getX() - selectionRectangle.getX();
-          double height = e.getY() - selectionRectangle.getY();
-//          selectionRectangle.setX(width > 0 ? width : ) // TODO FINISH
-          selectionRectangle.setWidth(width);
-          selectionRectangle.setHeight(height);
-        }
-      } else {
-        selectionRectangle.setVisible(false);
-        mapImage.setCursor(Cursor.CLOSED_HAND);
-        double newX = e.getSceneX() - difX;
-        double newY = e.getSceneY() - difY;
-        moveMapImage(newX, newY);
-      }
-    }
-  }
 
   public Point getNearestPointWithinRadius(Coordinate coord, double radius) {
     Point closestPoint = null;
@@ -721,182 +564,9 @@ public class MapViewController extends CentralUIController implements Initializa
     return closestPoint;
   }
 
-  @FXML
-  private void mapMousePressed(MouseEvent e) {
-    String buttonUsed = e.getButton().name();
-    mouseDragged = false;
-    if (buttonUsed.equals("SECONDARY")) {
-      if (mapViewFlag == 3) {
-      }
-    } else {
-      if (mapViewFlag == 3) {
-        if (e.isControlDown()) {
-          selectionRectangle.setX(e.getX());
-          selectionRectangle.setY(e.getY());
-        }
-      }
-      mapPressedX = e.getSceneX();
-      mapPressedY = e.getSceneY();
-      difX = mapPressedX - mapViewPane.getLayoutX();
-      difY = mapPressedY - mapViewPane.getLayoutY();
-    }
-  }
-
-  // TODO right-click pop-up menu for deleting, copying, connecting points to different floors
-
-  @FXML
-  private void mapMouseReleased(MouseEvent e) {
-    String buttonUsed = e.getButton().name();
-    if(mapViewFlag > 2){
-      if(selectionRectangle.isVisible()){ // if it's visible, then select any nodes in its area
-        double top = selectionRectangle.getY();
-        double bottom = selectionRectangle.getY() + selectionRectangle.getHeight();
-        double left = selectionRectangle.getX();
-        double right = selectionRectangle.getX() + selectionRectangle.getWidth();
-      }
-    }
-    selectionRectangle.setVisible(false);
-    if (buttonUsed.equals("SECONDARY")) {
-      if (mapViewFlag == 3) {
-
-      }
-    }
-    mapImage.setCursor(Cursor.DEFAULT);
-    mapReleasedX = e.getSceneX();
-    mapReleasedY = e.getSceneY();
-  }
-
-  @FXML
-  public void zoomIn() {
-    changeZoom(true);
-  }
-
-  @FXML
-  public void zoomOut() {
-    changeZoom(false);
-  }
-
-  @FXML
-  private void mapMouseClicked(MouseEvent e) {
-    String buttonUsed = e.getButton().name();
-    if (!mouseDragged) {
-      if (buttonUsed.equals("SECONDARY")) {
-        if (mapViewFlag > 2) {
-          if (e.isShiftDown()) {
-            for (Point p : secondaryPointFoci) {
-              if (!p.equals(pointFocus) && !p.getNeighbors().contains(pointFocus)) {
-                p.connectTo(pointFocus);
-                addVisualConnection(new Connection(p, pointFocus));
-              }
-            }
-          }
-        }
-
-      } else {
-        setPointFocus(null);
-        if (mapViewFlag == 3) {
-          if (e.isShiftDown()) {
-            Coordinate c = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
-            Point p = new Point(c.getX(), c.getY(), (int) floorChoiceBox.getValue());
-            points.add(p);
-            addVisualNodesForPoint(p);
-            setPointFocus(p);
-          }
-          if (e.isControlDown()) {
-            clearSecondaryPointFoci();
-          }
-        }
-      }
-    }
-  }
-
-  private void clearSecondaryPointFoci() {
-    // need to clone because foreach doesn't like modification while looping
-    for (Point p : (ArrayList<Point>) secondaryPointFoci.clone()) {
-      circles.get(p).setFill(NODE_COLOR);
-      secondaryPointFoci.remove(p);
-    }
-  }
-
-  @FXML
-  private void mapMouseMoved(MouseEvent e) {
-  }
-
-  // "scrolled" means the scroll wheel. This method controls zooming with the scroll wheel.
-  @FXML
-  private void mapMouseScrolled(ScrollEvent e) {
-    changeZoom(e.getDeltaY() > 0);
-    // Then update the tracking for cursor location vs image location
-    // Prevents odd behavior when dragging and scrolling simultaneously
-    if (mapViewPane.isPressed()) { // only if it's pressed to increase efficiency
-      mapPressedX = e.getSceneX();
-      mapPressedY = e.getSceneY();
-      difX = mapPressedX - mapViewPane.getLayoutX();
-      difY = mapPressedY - mapViewPane.getLayoutY();
-    }
-  }
 
 
-  private void setPointFocus(Point newFocus) {
-    if (secondaryPointFoci.contains(newFocus)) {
-      togglePointToSecondarySelection(newFocus);
-    }
-    if (pointFocus != null) {
-      Circle circ = circles.get(pointFocus);
-      if (circ != null) {
-        circ.setFill(NODE_COLOR);
-      }
-    }
-    pointFocus = newFocus;
-    String xText = "";
-    String yText = "";
-    String floorText = "";
-    String nameText = "";
-    if (newFocus != null) {
-      circles.get(newFocus).setFill(PRIMARY_POINT_FOCUS_COLOR);
-      xText = "" + pointFocus.getXCoord();
-      yText = "" + pointFocus.getYCoord();
-      floorText = "" + pointFocus.getFloor();
-      nameText = pointFocus.getName();
-    } else {
-      mapViewPane.requestFocus();
-    }
-    if (mapViewFlag > 2) {
-      xCoordField.setText("" + xText);
-      yCoordField.setText("" + yText);
-      floorField.setText("" + floorText);
-      nameField.setText(nameText);
-      if (nameText == "" && newFocus != null) {
-        nameField.requestFocus();
-      }
-    }
-    xLabel.setText("X Pos: " + xText);
-    yLabel.setText("Y Pos: " + yText);
-    floorLabel.setText("Floor: " + floorText);
-    nameLabel.setText("Room Name: " + nameText);
 
-  }
-
-  @FXML
-  ChoiceBox startNodeBox; // TODO (re?)move these
-  @FXML
-  ChoiceBox endNodeBox;
-
-  @FXML
-  public void drawPathButtonClicked() {
-    System.out.println("Drawing the path is currently disabled.");
-    /*
-    DataController controller = new DataController(null); // TODO shouldn't be needed
-    try{
-      points = controller.Astar((Point) startNodeBox.getValue(), (Point) endNodeBox.getValue()).getPoints();
-//      ObservableList<javafx.scene.Node> children = ((AnchorPane) mapImage.getParent()).getChildren();
-//      children.removeAll(currentlyDrawnNodes);
-    } catch (Exception e) {
-
-    }
-    */
-
-  }
 
   ///////////////////////////
   // Scene Control Methods //
@@ -996,4 +666,396 @@ public class MapViewController extends CentralUIController implements Initializa
     moveMapImage(mapViewPane.getLayoutX() + target.getX() - pixel.getX(),
         mapViewPane.getLayoutY() + target.getY() - pixel.getY());
   }
+  //-----///////////////-----//
+  //-----// Listeners //-----//
+  //-----///////////////-----//
+
+  ///////////////////////
+  // Control Listeners //
+  ///////////////////////
+
+  @FXML
+  ChoiceBox startNodeBox; // TODO (re?)move these
+  @FXML
+  ChoiceBox endNodeBox;
+
+  @FXML
+  public void drawPathButtonClicked() {
+    System.out.println("Drawing the path is currently disabled.");
+    /*
+    DataController controller = new DataController(null); // TODO shouldn't be needed
+    try{
+      points = controller.Astar((Point) startNodeBox.getValue(), (Point) endNodeBox.getValue()).getPoints();
+//      ObservableList<javafx.scene.Node> children = ((AnchorPane) mapImage.getParent()).getChildren();
+//      children.removeAll(currentlyDrawnNodes);
+    } catch (Exception e) {
+
+    }
+    */
+
+  }
+
+  @FXML
+  public void zoomIn() {
+    changeZoom(true);
+  }
+
+  @FXML
+  public void zoomOut() {
+    changeZoom(false);
+  }
+
+  @FXML
+  private void yCoordFieldKeyTyped(KeyEvent e) {
+    if (!Character.isDigit(e.getCharacter().charAt(0))) {
+      e.consume(); // throws out the KeyEvent before it can reach the text field
+    } else {
+      yCoordField.appendText(e.getCharacter());
+      e.consume();
+    }
+    updateSelected();
+  }
+
+  @FXML
+  private void floorFieldKeyTyped(KeyEvent e) {
+    if (!Character.isDigit(e.getCharacter().charAt(0))) {
+      e.consume(); // throws out the KeyEvent before it can reach the text field
+    } else {
+      floorField.appendText(e.getCharacter());
+      e.consume();
+    }
+    updateSelected();
+  }
+
+  @FXML
+  private void nameFieldKeyTyped(KeyEvent e) {
+    nameField.appendText(e.getCharacter());
+    e.consume();
+    updateSelected();
+  }
+
+  @FXML
+  public void deleteButtonClicked() {
+    // Clone the neighbors so that data isn't lost when a neighbor is removed
+    ArrayList<Point> neighbors = (ArrayList<Point>) pointFocus.getNeighbors().clone();
+    for (Point p : neighbors) {
+      Connection c = new Connection(pointFocus, p);
+      p.getNeighbors().remove(pointFocus); // TODO should be replaced by a method
+      pointFocus.getNeighbors().remove(p);
+      removeVisualConnection(c);
+    }
+    mapViewPane.getChildren().remove(circles.get(pointFocus));
+    points.remove(pointFocus);
+    circles.remove(pointFocus);
+    setPointFocus(null);
+  }
+
+  @FXML
+  public void updateSelectedButtonClicked() {
+    System.out.println("Update Point button is currently disabled.");
+    /*
+    double x = Double.parseDouble(xCoordField.getText());
+    double y = Double.parseDouble(yCoordField.getText());
+    int floor = Integer.parseInt(floorField.getText());
+    String name = nameField.getText();
+    pointFocus.setFloor(floor);
+    pointFocus.setXCoord(x);
+    pointFocus.setYCoord(y);
+    pointFocus.setName(name);
+    */
+  }
+
+  // Navigates back to the main menu
+  @FXML
+  public void backButtonClicked() {
+    Stage primaryStage = (Stage) floorChoiceBox.getScene().getWindow();
+    try {
+      restartUI(primaryStage);
+    } catch (Exception e) {
+      System.out.println("Cannot load main menu");
+      e.printStackTrace();
+    }
+  }
+
+  @FXML
+  public void newButtonClicked() {
+    System.out.println("New Point button is currently disabled");
+    /*
+    double x = Double.parseDouble(xCoordField.getText());
+    double y = Double.parseDouble(yCoordField.getText());
+    int floor = Integer.parseInt(floorField.getText());
+    String name = nameField.getText();
+    Point newPoint = new Point(x, y, floor);
+    addPoint(x, y, floor);
+    */
+  }
+
+  @FXML
+  private void xCoordFieldKeyTyped(KeyEvent e) {
+    if (!Character.isDigit(e.getCharacter().charAt(0))) {
+      e.consume(); // throws out the KeyEvent before it can reach the text field
+    } else {
+      xCoordField.appendText(e.getCharacter());
+      e.consume();
+    }
+    updateSelected();
+  }
+
+  @FXML
+  private void saveMapButtonClicked() {
+    // send the current state of the map
+    // update_nodes(points); // maybe Controller.update_nodes(points);
+    globalPoints = points;
+  }
+
+
+  ///////////////////
+  // Map Listeners //
+  ///////////////////
+
+  // "scrolled" means the scroll wheel. This method controls zooming with the scroll wheel.
+  @FXML
+  private void mapMouseScrolled(ScrollEvent e) {
+    changeZoom(e.getDeltaY() > 0);
+    // Then update the tracking for cursor location vs image location
+    // Prevents odd behavior when dragging and scrolling simultaneously
+    if (mapViewPane.isPressed()) { // only if it's pressed to increase efficiency
+      mapPressedX = e.getSceneX();
+      mapPressedY = e.getSceneY();
+      difX = mapPressedX - mapViewPane.getLayoutX();
+      difY = mapPressedY - mapViewPane.getLayoutY();
+    }
+  }
+
+  @FXML
+  private void mapMouseMoved(MouseEvent e) {
+  }
+
+  @FXML
+  private void mapMousePressed(MouseEvent e) {
+    String buttonUsed = e.getButton().name();
+    mouseDragged = false;
+    if (buttonUsed.equals("SECONDARY")) {
+      if (mapViewFlag == 3) {
+      }
+    } else {
+      if (mapViewFlag == 3) {
+        if (e.isControlDown()) {
+          selectionRectangleX = e.getX();
+          selectionRectangleY = e.getY();
+          selectionRectangle.setX(e.getX());
+          selectionRectangle.setY(e.getY());
+        }
+      }
+      mapPressedX = e.getSceneX();
+      mapPressedY = e.getSceneY();
+      difX = mapPressedX - mapViewPane.getLayoutX();
+      difY = mapPressedY - mapViewPane.getLayoutY();
+    }
+  }
+
+  @FXML
+  private void mapMouseDragged(MouseEvent e) {
+    mapMouseMoved(e); // TODO REMOVE ?
+    String buttonUsed = e.getButton().name();
+    mouseDragged = true;
+    if (buttonUsed.equals("SECONDARY")) {
+
+    } else {
+      // If control is down, draw a rectangle from the starting point to the current cursor location
+      if (e.isControlDown()) {
+        if(mapViewFlag > 2) {
+          selectionRectangle.setVisible(true);
+          double width = e.getX() - selectionRectangleX;
+          double height = e.getY() - selectionRectangleY;
+          selectionRectangle.setX(width > 0 ? selectionRectangleX : selectionRectangleX - (width *= -1)); // TODO FINISH
+          selectionRectangle.setY(height > 0 ? selectionRectangleY : selectionRectangleY - (height *= -1)); // TODO FINISH
+          selectionRectangle.setWidth(width);
+          selectionRectangle.setHeight(height);
+        }
+      } else {
+        selectionRectangle.setVisible(false);
+        mapImage.setCursor(Cursor.CLOSED_HAND);
+        double newX = e.getSceneX() - difX;
+        double newY = e.getSceneY() - difY;
+        moveMapImage(newX, newY);
+      }
+    }
+  }
+
+  @FXML
+  private void mapMouseReleased(MouseEvent e) {
+    String buttonUsed = e.getButton().name();
+    if(mapViewFlag > 2){
+      if(selectionRectangle.isVisible()){ // if it's visible, then select any nodes in its area
+        double v1 = selectionRectangle.getY();
+        double v2 = selectionRectangle.getY() + selectionRectangle.getHeight();
+        double h1 = selectionRectangle.getX();
+        double h2 = selectionRectangle.getX() + selectionRectangle.getWidth();
+        double top = Double.min(v1, v2)/current_zoom_scale;
+        double bot = Double.max(v1, v2)/current_zoom_scale;
+        double right = Double.max(h1, h2)/current_zoom_scale;
+        double left = Double.min(h1, h2)/current_zoom_scale;
+        for(Point p : points){
+          double x = p.getXCoord();
+          double y = p.getYCoord();
+          if(x > left && x < right && y > top && y < bot){
+            addPointToSecondarySelection(p);
+          }
+        }
+      }
+    }
+    selectionRectangle.setVisible(false);
+    if (buttonUsed.equals("SECONDARY")) {
+      if (mapViewFlag == 3) {
+
+      }
+    }
+    mapImage.setCursor(Cursor.DEFAULT);
+    mapReleasedX = e.getSceneX();
+    mapReleasedY = e.getSceneY();
+  }
+
+  @FXML
+  private void mapMouseClicked(MouseEvent e) {
+    String buttonUsed = e.getButton().name();
+    if (!mouseDragged) {
+      if (buttonUsed.equals("SECONDARY")) {
+        if (mapViewFlag > 2) {
+          if (e.isShiftDown()) {
+            for (Point p : secondaryPointFoci) {
+              if (!p.equals(pointFocus) && !p.getNeighbors().contains(pointFocus)) {
+                p.connectTo(pointFocus);
+                addVisualConnection(new Connection(p, pointFocus));
+              }
+            }
+          }
+        }
+
+      } else {
+        setPointFocus(null);
+        if (mapViewFlag == 3) {
+          if (e.isShiftDown()) {
+            Coordinate c = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
+            Point p = new Point(c.getX(), c.getY(), (int) floorChoiceBox.getValue());
+            points.add(p);
+            addVisualNodesForPoint(p);
+            setPointFocus(p);
+          }
+          if (e.isControlDown()) {
+            clearSecondaryPointFoci();
+          }
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void mapKeyPressed(KeyEvent e) {
+    if (mapViewFlag > 2) {
+      if (e.isControlDown()) {
+        if (e.getCode().toString().equals("C")) {
+          System.out.println("Ctrl + C pressed");
+        }
+        if (e.getCode().toString().equals("X")) {
+          System.out.println("Ctrl + X pressed");
+        }
+        if (e.getCode().toString().equals("V")) {
+          System.out.println("Ctrl + V pressed");
+        }
+      }
+    }
+  }
+
+
+  //////////////////////
+  // Circle Listeners //
+  //////////////////////
+
+  private void circleMouseScrolled(ScrollEvent e, Point p, Circle c) {
+    mapMouseScrolled(e);
+  }
+
+  private void circleMouseEntered(MouseEvent e, Point p, Circle c) {
+//    System.out.println("Mouse entered");
+
+  }
+
+  private void circleMousePressed(MouseEvent e, Point p, Circle c) {
+//    System.out.println("Mouse entered");
+    String button = e.getButton().toString();
+    if (button.equals("PRIMARY")) {
+      if (mapViewFlag > 2) {
+        c.setCursor(Cursor.CLOSED_HAND);
+      }
+    }
+    mouseDragged = false;
+  }
+
+  private void circleMouseClicked(MouseEvent e, Point p, Circle c) {
+    if (!mouseDragged) { // if it was dragged, then it's not a click
+      String button = e.getButton().toString();
+      if (button.equals("PRIMARY")) {
+        if (mapViewFlag > 2) {
+          if (e.isControlDown()) {
+            togglePointToSecondarySelection(p);
+          } else {
+            setPointFocus(p);
+          }
+        }
+      } else if (button.equals("SECONDARY")) {
+        if (e.isShiftDown()) {
+          if (mapViewFlag > 2) {
+            // Ensure that it does not get connected to itself or a repeat connection
+            if (!p.equals(pointFocus) && !p.getNeighbors().contains(pointFocus)) {
+              p.connectTo(pointFocus);
+              addVisualConnection(new Connection(p, pointFocus));
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+  private void circleMouseDragged(MouseEvent e, Point p, Circle c) {
+//    System.out.println("Mouse dragged");
+    mouseDragged = true;
+    String button = e.getButton().toString();
+    if (button.equals("PRIMARY")) {
+      if (mapViewFlag > 2) {
+        // control + drag on a circle means dragging all selected circles
+        if (e.isControlDown()) {
+          if (p.equals(pointFocus)) {
+            setPointFocus(null);
+          }
+          if (!secondaryPointFoci.contains(p)) {
+            secondaryPointFoci.add(p);
+            circles.get(p).setFill(SECONDARY_POINT_FOCUS_COLOR);
+          }
+          Coordinate c1 = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
+          Coordinate c2 = new Coordinate(p.getXCoord(), p.getYCoord());
+          for (Point p2 : secondaryPointFoci) {
+            p2.setXCoord(p2.getXCoord() + c1.getX() - c2.getX());
+            p2.setYCoord(p2.getYCoord() + c1.getY() - c2.getY());
+            updateCircleForPoint(p2);
+            updateLinesForPoint(p2);
+          }
+
+        } else {
+          Coordinate c1 = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
+          movePoint(p, c1);
+        }
+
+      }
+    } else if (button.equals("SECONDARY")) {
+
+    }
+  }
+
+  private void circleMouseReleased(MouseEvent e, Point p, Circle c) {
+//    System.out.println("Mouse released");
+    c.setCursor(Cursor.HAND);
+  }
+
 }
