@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.CentralController;
@@ -23,7 +24,8 @@ public class MainMenuController extends CentralUIController implements Initializ
   private Pane MainMenu;
   @FXML
   private ChoiceBox langBox;
-
+  @FXML
+  private AnchorPane anchorPane;
 
   @FXML
   private Button MapButton;
@@ -33,13 +35,26 @@ public class MainMenuController extends CentralUIController implements Initializ
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     chooseLang();
 
+    anchorPane.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+        System.out.println("Width: " + newSceneWidth);
+      }
+    });
+    anchorPane.heightProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+        System.out.println("Height: " + newSceneHeight);
+      }
+    });
+
   }
 
   public void gotoMap () {
     Stage primaryStage = (Stage) MainMenu.getScene().getWindow();
     try {
       mapViewFlag = 2;
-      loadScene(primaryStage, "/MapScene.fxml");
+      loadScene(primaryStage, "/MapScene.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -48,7 +63,7 @@ public class MainMenuController extends CentralUIController implements Initializ
   public void gotoSearch () {
     Stage primaryStage = (Stage) MainMenu.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/SearchMenu.fxml");
+      loadScene(primaryStage, "/SearchMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
     }
   }
@@ -56,7 +71,7 @@ public class MainMenuController extends CentralUIController implements Initializ
   public void gotoAdmin () {
     Stage primaryStage = (Stage) MainMenu.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/AdminLogin.fxml");
+      loadScene(primaryStage, "/AdminLogin.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
     }
   }
@@ -66,9 +81,7 @@ public class MainMenuController extends CentralUIController implements Initializ
     langBox.getItems().add("SPANISH");
     langBox.getItems().add("PORTUGUESE");
 
-
     langBox.getSelectionModel().select(0);
-
     langBox.getSelectionModel().selectedIndexProperty().addListener(
         new ChangeListener<Number>() {
           public void changed(ObservableValue ov, Number old_value, Number new_value) {

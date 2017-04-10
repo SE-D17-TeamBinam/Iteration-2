@@ -1,6 +1,7 @@
 package UIControllers;
 
 import Definitions.Physician;
+import javafx.scene.layout.AnchorPane;
 import org.Point;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ public class SearchMenuController extends CentralUIController implements Initial
   private Button SearchInfo;
   @FXML
   private Button SearchBack;
+
+  @FXML
+  private AnchorPane anchorPane;
 
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     /* Tests */
@@ -79,7 +83,7 @@ public class SearchMenuController extends CentralUIController implements Initial
   public void back () {
     Stage primaryStage = (Stage) SearchDirectory.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/MainMenu.fxml");
+      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();

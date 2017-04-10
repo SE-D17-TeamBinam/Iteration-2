@@ -32,7 +32,7 @@ public class DetailMenuController extends CentralUIController implements Initial
 
   public void back () {
     try {
-      loadScene(primaryStage, "/SearchMenu.fxml");
+      loadScene(primaryStage, "/SearchMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
       System.out.println("Cannot load search menu");
       e.printStackTrace();
@@ -41,7 +41,7 @@ public class DetailMenuController extends CentralUIController implements Initial
 
   public void gotoMap () {
     try {
-      loadScene(primaryStage, "/MapScene.fxml");
+      loadScene(primaryStage, "/MapScene.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
       System.out.println("Cannot load map view");
       e.printStackTrace();

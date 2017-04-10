@@ -3,6 +3,7 @@ package UIControllers;
 import javafx.event.Event;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import org.Dictionary;
 import CredentialManager.CredentialManager;
 import java.net.URL;
@@ -42,6 +43,9 @@ public class AdminLoginController extends CentralUIController implements Initial
   @FXML
   private Label LoginError;
 
+  @FXML
+  private AnchorPane anchorPane;
+
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     /* apply language configs */
@@ -72,7 +76,7 @@ public class AdminLoginController extends CentralUIController implements Initial
     if (credentialManager.userIsAdmin(enteredName, enteredPass))  {
       LoginError.setVisible(false);
       try {
-        loadScene(primaryStage, "/DirectEdit.fxml");
+        loadScene(primaryStage, "/DirectEdit.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
       } catch (Exception e) {
         System.out.println("Cannot load directory editor");
         e.printStackTrace();
@@ -88,7 +92,7 @@ public class AdminLoginController extends CentralUIController implements Initial
   public void back () {
     Stage primaryStage = (Stage) AdminLogin.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/MainMenu.fxml");
+      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();

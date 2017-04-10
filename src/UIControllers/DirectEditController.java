@@ -1,6 +1,7 @@
 package UIControllers;
 
 import Definitions.Physician;
+import javafx.scene.layout.AnchorPane;
 import org.Point;
 import java.net.URL;
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class DirectEditController extends CentralUIController implements Initial
   @FXML
   private ListView<String> Directory;
 
+  @FXML
+  private AnchorPane anchorPane;
   @FXML
   private Button DirectBack;
   @FXML
@@ -146,7 +149,7 @@ public class DirectEditController extends CentralUIController implements Initial
     mapViewFlag = 3;
     Stage primaryStage = (Stage) DirectEdit.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/MapScene.fxml");
+      loadScene(primaryStage, "/MapScene.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -315,7 +318,7 @@ public class DirectEditController extends CentralUIController implements Initial
   public void back () {
     Stage primaryStage = (Stage) DirectEdit.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/AdminLogin.fxml");
+      loadScene(primaryStage, "/AdminLogin.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();
@@ -325,7 +328,7 @@ public class DirectEditController extends CentralUIController implements Initial
   public void logoff () {
     Stage primaryStage = (Stage) DirectEdit.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/MainMenu.fxml");
+      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();

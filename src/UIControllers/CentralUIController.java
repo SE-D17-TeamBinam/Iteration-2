@@ -47,12 +47,10 @@ public class CentralUIController {
    * @parameter fxmlpath: the file path of the fxml file to be loaded
    * Set the stage to a scene by an fxml file
    */
-  public void loadScene (Stage primaryStage, String fxmlpath) throws Exception {
+  public void loadScene (Stage primaryStage, String fxmlpath, int width, int height) throws Exception {
     Parent root = FXMLLoader.load(getClass().getResource(fxmlpath));
-    primaryStage.setScene(new Scene(root, primaryStage.getWidth() - 16, primaryStage.getHeight() - 16));
+    primaryStage.setScene(new Scene(root, width, height));
     primaryStage.show();
   }
-
-
 
 }
