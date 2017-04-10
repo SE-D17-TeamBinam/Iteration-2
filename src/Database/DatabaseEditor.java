@@ -345,75 +345,38 @@ public class DatabaseEditor implements DatabaseInterface{
     return true;
   }
 
+  @Override
+  public void load() {
+
+  }
+
+  @Override
+  public void save() {
+
+  }
+
+  @Override
+  public ArrayList<Point> getNamedPoints() {
+    return null;
+  }
+
+  @Override
+  public ArrayList<Point> getPoints() {
+    return null;
+  }
+
+  @Override
+  public void setPoints(ArrayList<Point> points) {
+
+  }
+
+  @Override
+  public ArrayList<Physician> getPhysicians() {
+    return null;
+  }
+
+  @Override
+  public void setPhysicians(ArrayList<Physician> physicians) {
+
+  }
 }
-
-//OLD COMMENTED OUT CODE STARTS
-
-///////////////////////
-///////Neighboring///////
-//////////////////////
-/*
-  boolean addNeighboring(int pid_n,int pid_p) {
-
-    dbc.send_Command(
-        "insert into Neighboring (pid_n,pid_p) values (" + pid_n + "," + pid_p +  " ); \n");
-    return true;
-  }
-
-  boolean deleteNeighboring(int pid_n,int pid_p) {
-
-    dbc.send_Command(
-        "delete from Neighboring where pid_n = " + pid_n + " and pid_p = " + pid_p +  " ); \n");
-    return true;
-  }
-
-}
-
-
-*/
-
-///////////////////////////
-//////// Location /////////
-///////////////////////////
-/*
-  boolean addLocation(String name, String isFloor, int floor) {
-    dbc.send_Command(
-        "insert into Location (name,isFloor,Floor) values (" + name + "," + isFloor + "," + floor
-            + ")");
-    return true;
-  }
-
-  boolean removeLocation(String name, String isFloor, String floor) {
-    dbc.send_Command("delete from Location where name = '" + name + "')");
-    return true;
-  }
-*/
-
-
-
-  /*boolean update_nodes(ArrayList<Point> al){
-      dbc.send_Command("truncate table Point");
-
-
-      return true;
-  }*/
-
-///////////////////////
-/////Location -Point///
-///////////////////////
-/*
-  boolean addPointLocation(String location_name,int pid){
-    dbc.send_Command(
-        "insert into Point_Location (lid,pid) select lid,pid from location,point where location =  '"
-            + location_name + "' and pid = " + pid +  ");\n");
-    return true;
-  }
-
-  boolean removeLocationPoint(String location_name,int pid){
-
-    dbc.send_Command(
-        "delete from Point_Location where pid = " + pid +  " and lid = (select lid from location where name = '" + location_name +  "' ) ); \n");
-    return true;
-
-  }
-*/
