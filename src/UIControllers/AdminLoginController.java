@@ -3,6 +3,7 @@ package UIControllers;
 import javafx.event.Event;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import org.Dictionary;
 import CredentialManager.CredentialManager;
 import java.net.URL;
@@ -42,13 +43,15 @@ public class AdminLoginController extends CentralUIController implements Initial
   @FXML
   private Label LoginError;
 
+  @FXML
+  private AnchorPane anchorPane;
+
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     /* apply language configs */
-    System.out.println(currLang);
-    Dictionary d = new Dictionary();
-    AdminBack.setText(d.getString("Back", currLang));
-    AdminNameLabel.setText(d.getString("Username", currLang));
+    System.out.println(currSession.getLanguage().toString());
+    AdminBack.setText(dictionary.getString("Back", currSession.getLanguage()));
+    AdminNameLabel.setText(dictionary.getString("Username", currSession.getLanguage()));
   }
 
 
@@ -70,11 +73,10 @@ public class AdminLoginController extends CentralUIController implements Initial
     Stage primaryStage = (Stage) AdminLogin.getScene().getWindow();
     String enteredName = AdminNameField.getText();
     String enteredPass = AdminPassField.getText();
-    CredentialManager cm = new CredentialManager();
-    if (cm.userIsAdmin(enteredName, enteredPass)) {
+    if (credentialManager.userIsAdmin(enteredName, enteredPass))  {
       LoginError.setVisible(false);
       try {
-        loadScene(primaryStage, "/DirectEdit.fxml");
+        loadScene(primaryStage, "/DirectEdit.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
       } catch (Exception e) {
         System.out.println("Cannot load directory editor");
         e.printStackTrace();
@@ -90,7 +92,7 @@ public class AdminLoginController extends CentralUIController implements Initial
   public void back () {
     Stage primaryStage = (Stage) AdminLogin.getScene().getWindow();
     try {
-      restartUI(primaryStage);
+      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();
