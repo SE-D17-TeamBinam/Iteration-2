@@ -319,6 +319,10 @@ public class MapViewController extends CentralUIController implements Initializa
     floorChoiceBox.setValue(1);
   }
 
+
+  /**
+   * Sets the defaults for the map image upon loading this scene
+   */
   private void initializeMapImage() {
     mapImage.setFitHeight(mapImage.getImage().getHeight());
     mapImage.setFitWidth(mapImage.getImage().getWidth());
@@ -328,6 +332,14 @@ public class MapViewController extends CentralUIController implements Initializa
     moveMapImage(-302, -130);
   }
 
+  /**
+   * Generates Circles, Lines, and Connections for a given point
+   * Circles are mapped into circles with the associated Point as the key
+   * Connections are stored into connections
+   * Lines are mapped into lines with the associated Connection as the key
+   * Also adds listeners to Circles
+   * @param p the Point to generate visual JavaFX.Node's for
+   */
   private void addVisualNodesForPoint(Point p) {
     // For every neighbor, turn it into a connection if it doesn't exist
     for (int j = 0; j < p.getNeighbors().size(); j++) {
@@ -346,6 +358,12 @@ public class MapViewController extends CentralUIController implements Initializa
     }
   }
 
+  /**
+   * Creates the Line associated with a given Connection
+   * Adds the Line into lines, mapped with the Connection as a key
+   * Sets the Line to be mouse transparent, so that it does not steal events
+   * @param c the Connection to add a Line for
+   */
   private void addVisualConnection(Connection c) {
     if (!connections.contains(c)) {
       connections.add(c);
@@ -358,7 +376,9 @@ public class MapViewController extends CentralUIController implements Initializa
     }
   }
 
-  // Updates the points' and connections' to account for zoom
+  /**
+   * Updates the locations for all visual Lines and Points to account for the zoom scale
+   */
   private void updateVisualNodes() {
     for (Point p1 : circles.keySet()) {
       updateCircleForPoint(p1);
@@ -368,6 +388,10 @@ public class MapViewController extends CentralUIController implements Initializa
     }
   }
 
+  /**
+   * Updates the Lines for a given Point to account for zoom
+   * @param p the Point whose Lines should be updated
+   */
   private void updateLinesForPoint(Point p) {
     ArrayList<Point> neighbors = p.getNeighbors();
     for (int i = 0; i < neighbors.size(); i++) {
@@ -376,6 +400,10 @@ public class MapViewController extends CentralUIController implements Initializa
     }
   }
 
+  /**
+   * Updates the visual Line for a given Connection to account for zoom
+   * @param c the Connection whose Line should be updated
+   */
   private void updateLineForConnection(Connection c) {
     Line l = lines.get(c);
     Point start = c.getStart();
@@ -389,6 +417,10 @@ public class MapViewController extends CentralUIController implements Initializa
     l.setStrokeWidth(LINE_FILL * current_zoom_scale);
   }
 
+  /**
+   * Updates the visual Circle for a given Point to account for zoom
+   * @param p the Point whose Circle should be updated
+   */
   private void updateCircleForPoint(Point p) {
     Coordinate coord = pixelToCoordinate(new Coordinate(p.getXCoord(), p.getYCoord()));
     Circle c = circles.get(p);
@@ -397,6 +429,11 @@ public class MapViewController extends CentralUIController implements Initializa
     c.setRadius(point_radius * current_zoom_scale);
   }
 
+  /**
+   * Removes the visual Line associated with a given Connection
+   * Removes the Connection from connections
+   * @param c the Connection to remove
+   */
   private void removeVisualConnection(Connection c) {
     mapViewPane.getChildren().remove(lines.get(c));
     connections.remove(c);

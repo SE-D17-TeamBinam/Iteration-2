@@ -33,7 +33,7 @@ public class ListPoints {
     this.points.add(n);  //adds node to ArrayList Nodes
   }
 
-  /*
+  /**
    * Generates a clone of this ListPoints with no identical references
    * Will be used for copying points so that pasting does not break the program
    * Does not duplicate neighbors that are not selected
@@ -60,7 +60,7 @@ public class ListPoints {
     return new ListPoints(out);
   }
 
-  /*
+  /**
    * Attempts to generate a unique ID
    * This method should probably be rewritten more reliably, as this could theoretically repeat
    * @return a unique ID as an integer
@@ -69,7 +69,7 @@ public class ListPoints {
     return (int) Math.random()*Integer.MAX_VALUE;
   }
 
-  /*
+  /**
    * Searches through this ListPoints and returns any points on the given floor
    * @param floor the floor to search for
    * @return a ListPoints of the points on the requested floor
