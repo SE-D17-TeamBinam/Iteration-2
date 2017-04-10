@@ -770,7 +770,7 @@ public class MapViewController extends CentralUIController implements Initializa
   public void backButtonClicked() {
     Stage primaryStage = (Stage) floorChoiceBox.getScene().getWindow();
     try {
-      restartUI(primaryStage);
+      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();
