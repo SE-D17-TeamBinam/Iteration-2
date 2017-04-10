@@ -25,6 +25,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import org.ListPoints;
 import org.Point;
 
 /**
@@ -119,17 +120,24 @@ public class MapViewController extends CentralUIController implements Initializa
   ////////////////////////
 
   // ArrayList of Points to maintain in memory
-  private ArrayList<Point> points = new ArrayList<org.Point>();
+  private ArrayList<Point> floorPoints = new ArrayList<org.Point>();
   // ArrayList of Edges to help track for drawing
   private ArrayList<Connection> connections = new ArrayList<Connection>();
+
+  private ArrayList<Point> clipBoard = new ArrayList<Point>();
 
   // The currently selected point
   private Point pointFocus = null;
 
+  // TODO this should be a ListPoints
+  private ArrayList<Point> allPoints = new ArrayList<Point>();
+
   private ArrayList<Point> secondaryPointFoci = new ArrayList<Point>();
 
   // For drawing the points
-  private final double POINT_RADIUS = 15;
+  private final double POINT_RADIUS_MAX = 25;
+  private final double POINT_RADIUS_MIN = 5;
+  private double point_radius = 15;
   private final Color POINT_COLOR = new Color(1, 0, 0, 1);
   // For drawing connections between points
   private final double LINE_FILL = 2;
@@ -137,7 +145,7 @@ public class MapViewController extends CentralUIController implements Initializa
 
   private final Color PRIMARY_POINT_FOCUS_COLOR = new Color(1, 1, 0, 1);
   private final Color SECONDARY_POINT_FOCUS_COLOR = new Color(0, 0, 1, 1);
-  private final Color SELECTION_RECTANGLE_FILL = new Color(0,0.7,1,0.5);
+  private final Color SELECTION_RECTANGLE_FILL = new Color(0, 0.7, 1, 0.5);
 
   private double selectionRectangleX = 0;
   private double selectionRectangleY = 0;
@@ -150,13 +158,10 @@ public class MapViewController extends CentralUIController implements Initializa
   private HashMap<Point, Circle> circles = new HashMap<Point, Circle>();
   private HashMap<Connection, Line> lines = new HashMap<Connection, Line>();
 
-
   // TODO LIST
   // todo separate admin map view from user map view into separate controllers
-  // todo add connection to class diagram
-  // TODO add cut/copy + paste
+  // TODO add paste functionality
   // TODO right-click pop-up menu for deleting, copying, connecting points to different floors
-  // TODO box-selection of points
 
 
   private class Connection {
@@ -219,8 +224,30 @@ public class MapViewController extends CentralUIController implements Initializa
     initializeScene();
     initializeChoiceBox();
     initializeMapImage();
-    initializeVisualNodes();
     // Adds a circle to show where the mouse is on the map
+  }
+
+  private void switchFloors(int floor) {
+    // clear primary selection
+    // clear secondary selection
+    // remove circles and lines from scene
+    // clear circles
+    // clear lines
+    // clear floorPoints
+    // load in new points
+    // display new points
+    setPointFocus(null);
+    clearSecondaryPointFoci();
+    mapViewPane.getChildren().clear();
+    mapViewPane.getChildren().add(mapImage);
+    mapViewPane.getChildren().add(selectionRectangle);
+    circles.clear();
+    lines.clear();
+    floorPoints.clear();
+    connections.clear();
+    ListPoints lp = new ListPoints(allPoints);
+    floorPoints = lp.getFloor(floor).getPoints();
+    initializeVisualNodes();
   }
 
   // Add listeners for resizing the screen
@@ -269,8 +296,8 @@ public class MapViewController extends CentralUIController implements Initializa
     // convert neighbors to connections
 
     // For every point, make its neighbors a connection if it doesn't already exist
-    for (int i = 0; i < points.size(); i++) {
-      Point p = points.get(i);
+    for (int i = 0; i < floorPoints.size(); i++) {
+      Point p = floorPoints.get(i);
       addVisualNodesForPoint(p);
     }
 
@@ -295,10 +322,11 @@ public class MapViewController extends CentralUIController implements Initializa
                 "/floor_plans/" + (floorChoiceBox.getItems().get((int) new_value))
                     + "floor.png");
             mapImage.setImage(new_img);
+            switchFloors((int) floorChoiceBox.getItems().get((int) new_value));
 //            setPointFocus(null);
           }
         });
-    floorChoiceBox.setValue(4);
+    floorChoiceBox.setValue(1);
   }
 
   private void initializeMapImage() {
@@ -315,11 +343,13 @@ public class MapViewController extends CentralUIController implements Initializa
     }
     // Now, for every point, create a Circle
     Coordinate coord = pixelToCoordinate(new Coordinate(p.getXCoord(), p.getYCoord()));
-    Circle c = new Circle(coord.getX(), coord.getY(), POINT_RADIUS * current_zoom_scale,
+    Circle c = new Circle(coord.getX(), coord.getY(), point_radius * current_zoom_scale,
         POINT_COLOR);
-    circles.put(p, c);
-    mapViewPane.getChildren().add(c);
-    addCircleListeners(c, p);
+    if (circles.get(p) == null) {
+      circles.put(p, c);
+      mapViewPane.getChildren().add(c);
+      addCircleListeners(c, p);
+    }
   }
 
   private void addVisualConnection(Connection c) {
@@ -370,7 +400,7 @@ public class MapViewController extends CentralUIController implements Initializa
     Circle c = circles.get(p);
     c.setCenterX(coord.getX());
     c.setCenterY(coord.getY());
-    c.setRadius(POINT_RADIUS * current_zoom_scale);
+    c.setRadius(point_radius * current_zoom_scale);
   }
 
   private void removeVisualConnection(Connection c) {
@@ -390,19 +420,19 @@ public class MapViewController extends CentralUIController implements Initializa
   }
 
 
-  private void addPointToSecondarySelection(Point p){
-    if(secondaryPointFoci.contains(p)){
+  private void addPointToSecondarySelection(Point p) {
+    if (secondaryPointFoci.contains(p)) {
 
-    }else{
+    } else {
       secondaryPointFoci.add(p);
       circles.get(p).setFill(SECONDARY_POINT_FOCUS_COLOR);
     }
   }
 
-  private void removePointFromSecondarySelection(Point p){
-    if(!secondaryPointFoci.contains(p)){
+  private void removePointFromSecondarySelection(Point p) {
+    if (!secondaryPointFoci.contains(p)) {
 
-    }else{
+    } else {
       secondaryPointFoci.remove(p);
       circles.get(p).setFill(POINT_COLOR);
     }
@@ -470,7 +500,6 @@ public class MapViewController extends CentralUIController implements Initializa
   }
 
 
-
   private void movePoint(Point p, Coordinate c) {
     if (c.getX() > mapImage.getImage().getWidth()) {
       c.setX(mapImage.getImage().getWidth());
@@ -487,8 +516,6 @@ public class MapViewController extends CentralUIController implements Initializa
     updateCircleForPoint(p);
     updateLinesForPoint(p);
   }
-
-
 
 
   // Fixes the location of the zoom buttons and label, vertically and horizontally
@@ -516,23 +543,22 @@ public class MapViewController extends CentralUIController implements Initializa
     for (int i = 0; i < count; i++) {
       double xCoord = Math.random() * 5000;
       double yCoord = Math.random() * 2500;
-      Point newPoint = new Point(xCoord, yCoord, 4);
+      Point newPoint = new Point(xCoord, yCoord, 1);
       newPoint.setName("");
       if (point == null) {
       } else {
         newPoint.connectTo(point);
       }
-      newPoint.setFloor(4);
       point = newPoint;
-      points.add(newPoint);
+      allPoints.add(newPoint);
     }
   }
 
 
   public void getMap() {
-    points = globalPoints;
-    startNodeBox.getItems().setAll(points);
-    endNodeBox.getItems().setAll(points);
+    floorPoints = globalPoints;
+    startNodeBox.getItems().setAll(floorPoints);
+    endNodeBox.getItems().setAll(floorPoints);
   }
 
   private void updateSelected() {
@@ -548,12 +574,11 @@ public class MapViewController extends CentralUIController implements Initializa
   }
 
 
-
   public Point getNearestPointWithinRadius(Coordinate coord, double radius) {
     Point closestPoint = null;
     double closestDistance = Double.MAX_VALUE;
-    for (int i = 0; i < points.size(); i++) {
-      Point curP = points.get(i);
+    for (int i = 0; i < floorPoints.size(); i++) {
+      Point curP = floorPoints.get(i);
       Coordinate curPos = new Coordinate(curP.getXCoord(), curP.getYCoord());
       double curDist = curPos.distanceTo(coord);
       if (curDist < closestDistance && curDist < radius) {
@@ -563,10 +588,6 @@ public class MapViewController extends CentralUIController implements Initializa
     }
     return closestPoint;
   }
-
-
-
-
 
   ///////////////////////////
   // Scene Control Methods //
@@ -685,7 +706,7 @@ public class MapViewController extends CentralUIController implements Initializa
     /*
     DataController controller = new DataController(null); // TODO shouldn't be needed
     try{
-      points = controller.Astar((Point) startNodeBox.getValue(), (Point) endNodeBox.getValue()).getPoints();
+      floorPoints = controller.Astar((Point) startNodeBox.getValue(), (Point) endNodeBox.getValue()).getPoints();
 //      ObservableList<javafx.scene.Node> children = ((AnchorPane) mapImage.getParent()).getChildren();
 //      children.removeAll(currentlyDrawnNodes);
     } catch (Exception e) {
@@ -735,19 +756,38 @@ public class MapViewController extends CentralUIController implements Initializa
   }
 
   @FXML
-  public void deleteButtonClicked() {
+  public void deleteButtonClicked(MouseEvent e) {
     // Clone the neighbors so that data isn't lost when a neighbor is removed
-    ArrayList<Point> neighbors = (ArrayList<Point>) pointFocus.getNeighbors().clone();
-    for (Point p : neighbors) {
-      Connection c = new Connection(pointFocus, p);
-      p.getNeighbors().remove(pointFocus); // TODO should be replaced by a method
-      pointFocus.getNeighbors().remove(p);
-      removeVisualConnection(c);
+    if(!e.isControlDown()) {
+      if(pointFocus == null){
+        return;
+      }
+      ArrayList<Point> neighbors = (ArrayList<Point>) pointFocus.getNeighbors().clone();
+      for (Point p : neighbors) {
+        Connection c = new Connection(pointFocus, p);
+        p.getNeighbors().remove(pointFocus); // TODO should be replaced by a method
+        pointFocus.getNeighbors().remove(p);
+        removeVisualConnection(c);
+      }
+      mapViewPane.getChildren().remove(circles.get(pointFocus));
+      floorPoints.remove(pointFocus);
+      circles.remove(pointFocus);
+      setPointFocus(null);
+    }else{
+      for(Point secondaryFocus : (ArrayList<Point>) secondaryPointFoci.clone()) {
+        ArrayList<Point> neighbors = (ArrayList<Point>) secondaryFocus.getNeighbors().clone();
+        for (Point p : neighbors) {
+          Connection c = new Connection(secondaryFocus, p);
+          p.getNeighbors().remove(secondaryFocus); // TODO should be replaced by a method
+          secondaryFocus.getNeighbors().remove(p);
+          removeVisualConnection(c);
+        }
+        removePointFromSecondarySelection(secondaryFocus);
+        mapViewPane.getChildren().remove(circles.get(secondaryFocus));
+        floorPoints.remove(secondaryFocus);
+        circles.remove(secondaryFocus);
+      }
     }
-    mapViewPane.getChildren().remove(circles.get(pointFocus));
-    points.remove(pointFocus);
-    circles.remove(pointFocus);
-    setPointFocus(null);
   }
 
   @FXML
@@ -770,7 +810,8 @@ public class MapViewController extends CentralUIController implements Initializa
   public void backButtonClicked() {
     Stage primaryStage = (Stage) floorChoiceBox.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(),
+          (int) anchorPane.getHeight());
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();
@@ -804,10 +845,9 @@ public class MapViewController extends CentralUIController implements Initializa
   @FXML
   private void saveMapButtonClicked() {
     // send the current state of the map
-    // update_nodes(points); // maybe Controller.update_nodes(points);
-    globalPoints = points;
+    // update_nodes(points); // maybe Controller.update_nodes(floorPoints);
+    globalPoints = floorPoints;
   }
-
 
   ///////////////////
   // Map Listeners //
@@ -833,6 +873,8 @@ public class MapViewController extends CentralUIController implements Initializa
 
   @FXML
   private void mapMousePressed(MouseEvent e) {
+
+    mapViewPane.requestFocus();
     String buttonUsed = e.getButton().name();
     mouseDragged = false;
     if (buttonUsed.equals("SECONDARY")) {
@@ -864,12 +906,14 @@ public class MapViewController extends CentralUIController implements Initializa
     } else {
       // If control is down, draw a rectangle from the starting point to the current cursor location
       if (e.isControlDown()) {
-        if(mapViewFlag > 2) {
+        if (mapViewFlag > 2) {
           selectionRectangle.setVisible(true);
           double width = e.getX() - selectionRectangleX;
           double height = e.getY() - selectionRectangleY;
-          selectionRectangle.setX(width > 0 ? selectionRectangleX : selectionRectangleX - (width *= -1)); // TODO FINISH
-          selectionRectangle.setY(height > 0 ? selectionRectangleY : selectionRectangleY - (height *= -1)); // TODO FINISH
+          selectionRectangle.setX(
+              width > 0 ? selectionRectangleX : selectionRectangleX - (width *= -1)); // TODO FINISH
+          selectionRectangle.setY(height > 0 ? selectionRectangleY
+              : selectionRectangleY - (height *= -1)); // TODO FINISH
           selectionRectangle.setWidth(width);
           selectionRectangle.setHeight(height);
         }
@@ -886,20 +930,20 @@ public class MapViewController extends CentralUIController implements Initializa
   @FXML
   private void mapMouseReleased(MouseEvent e) {
     String buttonUsed = e.getButton().name();
-    if(mapViewFlag > 2){
-      if(selectionRectangle.isVisible()){ // if it's visible, then select any nodes in its area
+    if (mapViewFlag > 2) {
+      if (selectionRectangle.isVisible()) { // if it's visible, then select any nodes in its area
         double v1 = selectionRectangle.getY();
         double v2 = selectionRectangle.getY() + selectionRectangle.getHeight();
         double h1 = selectionRectangle.getX();
         double h2 = selectionRectangle.getX() + selectionRectangle.getWidth();
-        double top = Double.min(v1, v2)/current_zoom_scale;
-        double bot = Double.max(v1, v2)/current_zoom_scale;
-        double right = Double.max(h1, h2)/current_zoom_scale;
-        double left = Double.min(h1, h2)/current_zoom_scale;
-        for(Point p : points){
+        double top = Double.min(v1, v2) / current_zoom_scale;
+        double bot = Double.max(v1, v2) / current_zoom_scale;
+        double right = Double.max(h1, h2) / current_zoom_scale;
+        double left = Double.min(h1, h2) / current_zoom_scale;
+        for (Point p : floorPoints) {
           double x = p.getXCoord();
           double y = p.getYCoord();
-          if(x > left && x < right && y > top && y < bot){
+          if (x > left && x < right && y > top && y < bot) {
             addPointToSecondarySelection(p);
           }
         }
@@ -938,7 +982,7 @@ public class MapViewController extends CentralUIController implements Initializa
           if (e.isShiftDown()) {
             Coordinate c = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
             Point p = new Point(c.getX(), c.getY(), (int) floorChoiceBox.getValue());
-            points.add(p);
+            floorPoints.add(p);
             addVisualNodesForPoint(p);
             setPointFocus(p);
           }
@@ -955,25 +999,63 @@ public class MapViewController extends CentralUIController implements Initializa
     if (mapViewFlag > 2) {
       if (e.isControlDown()) {
         if (e.getCode().toString().equals("C")) {
-          System.out.println("Ctrl + C pressed");
+          // Cloned once here because the points could be changed after being copied, which is bad
+          ListPoints lp = new ListPoints(secondaryPointFoci);
+          clipBoard = lp.deepClone().getPoints();
+          System.out.println("Copied " + clipBoard.size() + " selected points...");
         }
         if (e.getCode().toString().equals("X")) {
           System.out.println("Ctrl + X pressed");
         }
         if (e.getCode().toString().equals("V")) {
-          System.out.println("Ctrl + V pressed");
+          if (clipBoard.isEmpty()) {
+            System.out.println("Clipboard is empty.");
+          } else {
+            System.out.println("Pasting " + clipBoard.size() + " points.");
+
+            // TODO paste the points
+            floorPoints.addAll(clipBoard);
+            clearSecondaryPointFoci();
+            initializeVisualNodes();
+            for(Point p : clipBoard){
+              p.setFloor((int) floorChoiceBox.getValue());
+              addPointToSecondarySelection(p);
+            }
+
+            // Cloned again, after being pasted, because they could be pasted more than once
+            ListPoints lp = new ListPoints(clipBoard);
+            clipBoard = lp.deepClone().getPoints();
+          }
         }
       }
     }
   }
-
 
   //////////////////////
   // Circle Listeners //
   //////////////////////
 
   private void circleMouseScrolled(ScrollEvent e, Point p, Circle c) {
-    mapMouseScrolled(e);
+    if (e.isControlDown()) {
+      // TODO change size of points
+      boolean delta = e.getDeltaY() > 0;
+      if(!delta){
+        if(point_radius >= POINT_RADIUS_MAX){
+          point_radius = POINT_RADIUS_MAX;
+        }else{
+          point_radius += 1;
+        }
+      }else{
+        if(point_radius <= POINT_RADIUS_MIN){
+          point_radius = POINT_RADIUS_MIN;
+        }else{
+          point_radius -= 1;
+        }
+      }
+      updateVisualNodes();
+    } else {
+      mapMouseScrolled(e);
+    }
   }
 
   private void circleMouseEntered(MouseEvent e, Point p, Circle c) {
@@ -993,6 +1075,7 @@ public class MapViewController extends CentralUIController implements Initializa
   }
 
   private void circleMouseClicked(MouseEvent e, Point p, Circle c) {
+
     if (!mouseDragged) { // if it was dragged, then it's not a click
       String button = e.getButton().toString();
       if (button.equals("PRIMARY")) {
@@ -1000,6 +1083,12 @@ public class MapViewController extends CentralUIController implements Initializa
           if (e.isControlDown()) {
             togglePointToSecondarySelection(p);
           } else {
+            setPointFocus(p);
+          }
+        }else{
+          if(e.isControlDown()){
+
+          }else{
             setPointFocus(p);
           }
         }
@@ -1015,7 +1104,6 @@ public class MapViewController extends CentralUIController implements Initializa
         }
       }
     }
-
   }
 
   private void circleMouseDragged(MouseEvent e, Point p, Circle c) {
