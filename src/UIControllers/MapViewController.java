@@ -42,14 +42,10 @@ public class MapViewController extends CentralUIController implements Initializa
   @FXML
   private ChoiceBox floorChoiceBox;
   @FXML
-  private ImageView bannerImage;
-  @FXML
   private AnchorPane anchorPane;
   @FXML
   private Rectangle leftBar;
 
-  @FXML
-  private ImageView titleBanner;
 
   @FXML
   private Pane infoPane;
@@ -252,41 +248,35 @@ public class MapViewController extends CentralUIController implements Initializa
 
   // Add listeners for resizing the screen
   private void initializeScene() {
-    ChangeListener<Number> windowHeightListener = new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth,
-          Number newSceneWidth) {
-        bannerImage.setFitWidth((double) newSceneWidth);
-        map_x_max = (double) newSceneWidth - infoPaneRectangle.getWidth();
-        infoPane.setLayoutX((double) newSceneWidth - infoPaneRectangle.getWidth());
-        adminPane.setLayoutX(infoPane.getLayoutX());
-        titleBanner.setLayoutX(((double) newSceneWidth - titleBanner.getFitWidth()) / 2);
-        fixMapDisplayLocation();
-        fixZoomPanePos();
-      }
-    };
-    ChangeListener<Number> windowWidthListener = new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight,
-          Number newSceneHeight) {
-        leftBar.setHeight((double) newSceneHeight);
-
-        map_y_max = (double) newSceneHeight;
-        infoPaneRectangle.setHeight(((double) newSceneHeight - bannerImage.getFitHeight()) / 2);
-        adminPaneRectangle.setHeight(infoPaneRectangle.getHeight());
-        adminPane.setLayoutY(infoPane.getLayoutY() + infoPaneRectangle.getHeight());
-        fixMapDisplayLocation();
-        fixZoomPanePos();
-      }
-    };
-
-    anchorPane.widthProperty().addListener(windowHeightListener);
-    anchorPane.heightProperty().addListener(windowWidthListener);
+    addResolutionListener(anchorPane);
+    setBackground(anchorPane);
+    mapViewPane.toBack();
+    backgroundView.toBack();
     if (mapViewFlag != 3) {
       adminPane.setVisible(false);
     } else {
       fixZoomPanePos();
     }
+  }
+
+  @Override
+  public void customListenerX(){
+    map_x_max = x_res - infoPaneRectangle.getWidth();
+    infoPane.setLayoutX(x_res - infoPaneRectangle.getWidth());
+    adminPane.setLayoutX(infoPane.getLayoutX());
+    fixMapDisplayLocation();
+    fixZoomPanePos();
+  }
+
+  @Override
+  public void customListenerY(){
+    leftBar.setHeight(y_res);
+    map_y_max = y_res;
+    infoPaneRectangle.setHeight((y_res - banner.getHeight()) / 2);
+    adminPaneRectangle.setHeight(infoPaneRectangle.getHeight());
+    adminPane.setLayoutY(infoPane.getLayoutY() + infoPaneRectangle.getHeight());
+    fixMapDisplayLocation();
+    fixZoomPanePos();
   }
 
   private void initializeVisualNodes() {
