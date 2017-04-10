@@ -184,7 +184,45 @@ public class Dictionary {
     Entry cancel = new Entry(u);
     this.addEntry("Cancelar", cancel);
 
+    HashMap<Language, String> searchDirectoryLabel = new HashMap<Language, String> ();
+    searchDirectoryLabel = new HashMap<Language, String> ();
+    searchDirectoryLabel.put(Language.SPANISH, "Buscar en directorio");
+    searchDirectoryLabel.put(Language.ENGLISH, "Search Directory");
+    searchDirectoryLabel.put(Language.PORTUGESE, "Diretório de Pesquisa");
+    Entry searchDirectory = new Entry(searchDirectoryLabel);
+    this.addEntry("Search Directory", searchDirectory);
 
+    HashMap<Language, String> firstNameLabel = new HashMap<Language, String> ();
+    firstNameLabel = new HashMap<Language, String> ();
+    firstNameLabel.put(Language.SPANISH, "Nombre de pila");
+    firstNameLabel.put(Language.ENGLISH, "First Name");
+    firstNameLabel.put(Language.PORTUGESE, "Nome próprio");
+    Entry firstName = new Entry(firstNameLabel);
+    this.addEntry("First Name", firstName);
+
+    HashMap<Language, String> lastNameLabel = new HashMap<Language, String> ();
+    lastNameLabel = new HashMap<Language, String> ();
+    lastNameLabel.put(Language.SPANISH, "Apellidos");
+    lastNameLabel.put(Language.ENGLISH, "Last Name");
+    lastNameLabel.put(Language.PORTUGESE, "Apelido");
+    Entry lastName = new Entry(lastNameLabel);
+    this.addEntry("Last Name", lastName);
+
+    HashMap<Language, String> titleLabel = new HashMap<Language, String> ();
+    titleLabel = new HashMap<Language, String> ();
+    titleLabel.put(Language.SPANISH, "Puesto");
+    titleLabel.put(Language.ENGLISH, "Title");
+    titleLabel.put(Language.PORTUGESE, "Cargo");
+    Entry title = new Entry(titleLabel);
+    this.addEntry("Title", title);
+
+    HashMap<Language, String> locationsLabel = new HashMap<Language, String> ();
+    locationsLabel = new HashMap<Language, String> ();
+    locationsLabel.put(Language.SPANISH, "Ubicaciónes");
+    locationsLabel.put(Language.ENGLISH, "Locations");
+    locationsLabel.put(Language.PORTUGESE, "Localizações");
+    Entry locations = new Entry(locationsLabel);
+    this.addEntry("Locations", locations);
 
 
 
