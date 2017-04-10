@@ -2,6 +2,7 @@ package UIControllers;
 
 import Definitions.Physician;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import org.Point;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,6 +25,12 @@ public class SearchMenuController extends CentralUIController implements Initial
   private ListView SearchDirectory;
   @FXML
   private TextField SearchField;
+  @FXML
+  private Button SearchDone;
+  @FXML
+  private Button SearchClear;
+  @FXML
+  private Pane SearchPane;
 
   @FXML
   private ListView DropMenu;
@@ -39,6 +46,7 @@ public class SearchMenuController extends CentralUIController implements Initial
 
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     addResolutionListener(anchorPane);
+    setBackground(anchorPane);
     /* Tests */
     ArrayList<Point> rooms = new ArrayList<Point>();
     ArrayList<Physician> docs = new ArrayList<Physician>();
@@ -63,6 +71,20 @@ public class SearchMenuController extends CentralUIController implements Initial
     docs.add(b3);
     docs.add(b4);
     updateDirectory(docs);
+  }
+
+  @Override
+  public void customListenerX () {
+    SearchPane.setLayoutX(x_res/2 - 325);
+    SearchField.setLayoutX(x_res/2 - 325);
+    SearchClear.setLayoutX(x_res/2 + 250);
+    SearchDone.setLayoutX(x_res - 155);
+  }
+  @Override
+  public void customListenerY () {
+    SearchPane.setLayoutY(5*(y_res/11)-20);
+    SearchField.setLayoutY(4*(y_res/11)-50);
+    SearchClear.setLayoutY(4*(y_res/11)-50);
   }
 
   public void updateDirectory (List<Physician> HCs){

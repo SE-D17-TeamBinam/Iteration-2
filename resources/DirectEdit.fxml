@@ -4,31 +4,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UIControllers.DirectEditController">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1300.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UIControllers.DirectEditController">
    <children>
-      <Pane fx:id="DirectEdit" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750" prefWidth="1300" style="-fx-background-color: #FFFFFF;">
+      <Pane fx:id="DirectEdit" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750" prefWidth="1300" style="-fx-background-color: transparent;">
          <children>
-            <ImageView fx:id="DirectBackground" fitHeight="379.0" fitWidth="1300.0" layoutY="300.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@icons/background_shapte.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="DirectBanner" fitHeight="160.0" fitWidth="1300.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@icons/banner.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="DirectLogo" fitHeight="82.0" fitWidth="496.0" layoutX="410.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@icons/BWFH_logo_rgb.jpg" />
-               </image>
-            </ImageView>
             <Button fx:id="DirectBack" layoutX="5.0" layoutY="5.0" mnemonicParsing="false" onMouseClicked="#back" prefHeight="75.0" prefWidth="150.0" text="&lt;- Back">
                <font>
                   <Font size="26.0" />
@@ -38,31 +21,38 @@
             <TextField fx:id="LastName" layoutX="779.0" layoutY="215.0" prefHeight="28.0" prefWidth="230.0">
                <font>
                   <Font size="20.0" />
-               </font></TextField>
+               </font>
+            </TextField>
             <TextField fx:id="FirstName" layoutX="779.0" layoutY="285.0" prefHeight="28.0" prefWidth="230.0">
                <font>
                   <Font size="20.0" />
-               </font></TextField>
+               </font>
+            </TextField>
             <TextField fx:id="Title" layoutX="779.0" layoutY="355.0" prefHeight="28.0" prefWidth="230.0">
                <font>
                   <Font size="20.0" />
-               </font></TextField>
+               </font>
+            </TextField>
             <Label layoutX="650.0" layoutY="222.0" prefHeight="28.0" prefWidth="98.0" text="Last Name">
                <font>
                   <Font size="20.0" />
-               </font></Label>
+               </font>
+            </Label>
             <Label layoutX="650.0" layoutY="292.0" prefHeight="28.0" prefWidth="98.0" text="First Name">
                <font>
                   <Font size="20.0" />
-               </font></Label>
+               </font>
+            </Label>
             <Label layoutX="650.0" layoutY="362.0" prefHeight="28.0" prefWidth="98.0" text="Title">
                <font>
                   <Font size="20.0" />
-               </font></Label>
+               </font>
+            </Label>
             <Label layoutX="650.0" layoutY="432.0" prefHeight="28.0" prefWidth="98.0" text="Locations">
                <font>
                   <Font size="20.0" />
-               </font></Label>
+               </font>
+            </Label>
             <Button fx:id="DirectLogoff" layoutX="1145.0" layoutY="5.0" mnemonicParsing="false" onMouseClicked="#logoff" prefHeight="75.0" prefWidth="150.0" text="Log off">
                <font>
                   <Font size="26.0" />
@@ -81,23 +71,25 @@
             <Button layoutX="1127.0" layoutY="436.0" mnemonicParsing="false" onMouseClicked="#create" prefHeight="48.0" prefWidth="111.0" text="Create">
                <font>
                   <Font size="20.0" />
-               </font></Button>
+               </font>
+            </Button>
             <Button layoutX="1127.0" layoutY="506.0" mnemonicParsing="false" onMouseClicked="#delete" prefHeight="48.0" prefWidth="111.0" text="Delete">
                <font>
                   <Font size="20.0" />
-               </font></Button>
+               </font>
+            </Button>
             <Button layoutX="1089.0" layoutY="209.0" mnemonicParsing="false" onMouseClicked="#editMap" prefHeight="64.0" prefWidth="149.0" text="Edit Map">
                <font>
                   <Font size="20.0" />
                </font>
             </Button>
             <ListView fx:id="Locations" layoutX="779.0" layoutY="425.0" prefHeight="269.0" prefWidth="230.0" />
-            <Button fx:id="AddLocation" layoutX="1025.0" layoutY="435.0" onMouseClicked="#addLocation" mnemonicParsing="false" prefHeight="45.0" prefWidth="45.0" text="+">
+            <Button fx:id="AddLocation" layoutX="1025.0" layoutY="435.0" mnemonicParsing="false" onMouseClicked="#addLocation" prefHeight="45.0" prefWidth="45.0" text="+">
                <font>
                   <Font size="20.0" />
                </font>
             </Button>
-            <Button fx:id="RemoveLocation" layoutX="1025.0" layoutY="492.0" onMouseClicked="#removeLocation" mnemonicParsing="false" prefHeight="45.0" prefWidth="45.0" text="-">
+            <Button fx:id="RemoveLocation" layoutX="1025.0" layoutY="492.0" mnemonicParsing="false" onMouseClicked="#removeLocation" prefHeight="45.0" prefWidth="45.0" text="-">
                <font>
                   <Font size="20.0" />
                </font>

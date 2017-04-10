@@ -23,6 +23,7 @@ public class DetailMenuController extends CentralUIController implements Initial
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     addResolutionListener(anchorPane);
+    setBackground(anchorPane);
   }
 
   public void quit () {

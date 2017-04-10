@@ -1,6 +1,7 @@
 package UIControllers;
 
 import Definitions.Physician;
+import javafx.scene.layout.AnchorPane;
 import org.Point;
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,6 +48,9 @@ public class DirectEditController extends CentralUIController implements Initial
   private Button AddLocation;
   @FXML
   private Button RemoveLocation;
+  @FXML
+  private AnchorPane anchorPane;
+
 
   @FXML
   private Button DirectBack;
@@ -70,7 +74,18 @@ public class DirectEditController extends CentralUIController implements Initial
   private Button DirectDelete;
 
   @Override
+  public void customListenerX () {
+    DirectLogoff.setLayoutX(x_res - 155);
+  }
+  @Override
+  public void customListenerY () {
+
+  }
+
+  @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    addResolutionListener(anchorPane);
+    setBackground(anchorPane);
 
     rooms = new ArrayList<>();
     docs = new ArrayList<>();
