@@ -3,6 +3,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -14,11 +15,14 @@ public class DetailMenuController extends CentralUIController implements Initial
   // define all ui elements
   @FXML
   private Pane DetailMenu; // Value injected by FXMLLoader
+  @FXML
+  private AnchorPane anchorPane;
 
   private Stage primaryStage = (Stage) DetailMenu.getScene().getWindow();
 
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    addResolutionListener(anchorPane);
   }
 
   public void quit () {

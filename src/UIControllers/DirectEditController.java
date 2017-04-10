@@ -23,7 +23,8 @@ import javafx.stage.Stage;
  */
 public class DirectEditController extends CentralUIController implements Initializable {
   private int selectedHPIndex;
-  private Physician selectedHP;
+  private Physician selectedHP = null;
+  private ChoiceBox<String> selectedCB = null;
   private ArrayList<Physician> docs;
   private ArrayList<Point> rooms;
   private ArrayList<String> roomNames;
@@ -70,7 +71,6 @@ public class DirectEditController extends CentralUIController implements Initial
 
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-    selectedHP = null;
 
     rooms = new ArrayList<>();
     docs = new ArrayList<>();
@@ -121,6 +121,14 @@ public class DirectEditController extends CentralUIController implements Initial
             refreshInfo();
           }
         });
+    Locations.getSelectionModel().selectedItemProperty().addListener(
+        new ChangeListener<ChoiceBox>() {
+          @Override
+          public void changed(ObservableValue<? extends ChoiceBox> observable, ChoiceBox oldValue,
+              ChoiceBox newValue) {
+            selectedCB = newValue;
+          }
+        });
   }
 
   @FXML
@@ -155,11 +163,15 @@ public class DirectEditController extends CentralUIController implements Initial
   }
 
   public void addLocation () {
-
+    ChoiceBox<String> cb = new ChoiceBox<>();
+    cb.setItems(FXCollections.observableList(roomNames));
+    locations.add(cb);
+    Locations.setItems(FXCollections.observableList(locations));
   }
 
   public void removeLocation () {
-
+    locations.remove(selectedCB);
+    Locations.setItems(FXCollections.observableList(locations));
   }
 
   private void refreshDir () {
@@ -194,9 +206,12 @@ public class DirectEditController extends CentralUIController implements Initial
 
   private void addtoFinalLocs(ArrayList<Point> ret, ChoiceBox L) {
     for (Point n : rooms) {
-      if (n.getName().equals(L.getValue().toString())){
-        ret.add(n);
-        break;
+      try {
+        if (n.getName().equals(L.getValue().toString())) {
+          ret.add(n);
+        }
+      } catch (NullPointerException e) {
+        continue;
       }
     }
   }
@@ -209,7 +224,6 @@ public class DirectEditController extends CentralUIController implements Initial
       selectedHP.setTitle(Title.getText());
       selectedHP.setLocations(finalLocs());
       // check if it's a new Physician
-      System.out.println(Integer.toString(selectedHPIndex));
       if (selectedHPIndex >= docs.size()) {
         docs.add(selectedHP);
       } else {
@@ -256,7 +270,7 @@ public class DirectEditController extends CentralUIController implements Initial
     try {
       loadScene(primaryStage, "/AdminLogin.fxml");
     } catch (Exception e) {
-      System.out.println("Cannot load main menu");
+      System.out.println("Cannot load admin login menu");
       e.printStackTrace();
     }
   }
