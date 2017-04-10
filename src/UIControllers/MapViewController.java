@@ -771,6 +771,7 @@ public class MapViewController extends CentralUIController implements Initializa
       }
       mapViewPane.getChildren().remove(circles.get(pointFocus));
       floorPoints.remove(pointFocus);
+      allPoints.remove(pointFocus);
       circles.remove(pointFocus);
       setPointFocus(null);
     }else{
@@ -785,6 +786,7 @@ public class MapViewController extends CentralUIController implements Initializa
         removePointFromSecondarySelection(secondaryFocus);
         mapViewPane.getChildren().remove(circles.get(secondaryFocus));
         floorPoints.remove(secondaryFocus);
+        allPoints.remove(secondaryFocus);
         circles.remove(secondaryFocus);
       }
     }
@@ -983,6 +985,7 @@ public class MapViewController extends CentralUIController implements Initializa
             Coordinate c = coordinateToPixel(new Coordinate(e.getX(), e.getY()));
             Point p = new Point(c.getX(), c.getY(), (int) floorChoiceBox.getValue());
             floorPoints.add(p);
+            allPoints.add(p);
             addVisualNodesForPoint(p);
             setPointFocus(p);
           }
@@ -1012,9 +1015,8 @@ public class MapViewController extends CentralUIController implements Initializa
             System.out.println("Clipboard is empty.");
           } else {
             System.out.println("Pasting " + clipBoard.size() + " points.");
-
-            // TODO paste the points
             floorPoints.addAll(clipBoard);
+            allPoints.addAll(clipBoard);
             clearSecondaryPointFoci();
             initializeVisualNodes();
             for(Point p : clipBoard){
