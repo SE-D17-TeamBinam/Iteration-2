@@ -332,6 +332,10 @@ public class MapViewController extends CentralUIController implements Initializa
   private void initializeMapImage() {
     mapImage.setFitHeight(mapImage.getImage().getHeight());
     mapImage.setFitWidth(mapImage.getImage().getWidth());
+    for (int i = 0; i < 20; i++) {
+      zoomOut();
+    }
+    moveMapImage(-302, -130);
   }
 
   private void addVisualNodesForPoint(Point p) {
@@ -424,6 +428,9 @@ public class MapViewController extends CentralUIController implements Initializa
     if (secondaryPointFoci.contains(p)) {
 
     } else {
+      if (p.equals(pointFocus)) {
+        setPointFocus(null);
+      }
       secondaryPointFoci.add(p);
       circles.get(p).setFill(SECONDARY_POINT_FOCUS_COLOR);
     }
@@ -758,8 +765,8 @@ public class MapViewController extends CentralUIController implements Initializa
   @FXML
   public void deleteButtonClicked(MouseEvent e) {
     // Clone the neighbors so that data isn't lost when a neighbor is removed
-    if(!e.isControlDown()) {
-      if(pointFocus == null){
+    if (!e.isControlDown()) {
+      if (pointFocus == null) {
         return;
       }
       ArrayList<Point> neighbors = (ArrayList<Point>) pointFocus.getNeighbors().clone();
@@ -774,8 +781,8 @@ public class MapViewController extends CentralUIController implements Initializa
       allPoints.remove(pointFocus);
       circles.remove(pointFocus);
       setPointFocus(null);
-    }else{
-      for(Point secondaryFocus : (ArrayList<Point>) secondaryPointFoci.clone()) {
+    } else {
+      for (Point secondaryFocus : (ArrayList<Point>) secondaryPointFoci.clone()) {
         ArrayList<Point> neighbors = (ArrayList<Point>) secondaryFocus.getNeighbors().clone();
         for (Point p : neighbors) {
           Connection c = new Connection(secondaryFocus, p);
@@ -969,10 +976,16 @@ public class MapViewController extends CentralUIController implements Initializa
       if (buttonUsed.equals("SECONDARY")) {
         if (mapViewFlag > 2) {
           if (e.isShiftDown()) {
-            for (Point p : secondaryPointFoci) {
-              if (!p.equals(pointFocus) && !p.getNeighbors().contains(pointFocus)) {
+            if (!pointFocus.getNeighbors().containsAll(secondaryPointFoci)) {
+              for (Point p : secondaryPointFoci) {
                 p.connectTo(pointFocus);
                 addVisualConnection(new Connection(p, pointFocus));
+
+              }
+            } else {
+              for (Point p : secondaryPointFoci) {
+                p.severFrom(pointFocus);
+                removeVisualConnection(new Connection(p, pointFocus));
               }
             }
           }
@@ -1002,10 +1015,12 @@ public class MapViewController extends CentralUIController implements Initializa
     if (mapViewFlag > 2) {
       if (e.isControlDown()) {
         if (e.getCode().toString().equals("C")) {
+          mapViewPane.setCursor(Cursor.WAIT);
           // Cloned once here because the points could be changed after being copied, which is bad
           ListPoints lp = new ListPoints(secondaryPointFoci);
           clipBoard = lp.deepClone().getPoints();
           System.out.println("Copied " + clipBoard.size() + " selected points...");
+          mapViewPane.setCursor(Cursor.DEFAULT);
         }
         if (e.getCode().toString().equals("X")) {
           System.out.println("Ctrl + X pressed");
@@ -1014,12 +1029,13 @@ public class MapViewController extends CentralUIController implements Initializa
           if (clipBoard.isEmpty()) {
             System.out.println("Clipboard is empty.");
           } else {
+            mapViewPane.setCursor(Cursor.WAIT);
             System.out.println("Pasting " + clipBoard.size() + " points.");
             floorPoints.addAll(clipBoard);
             allPoints.addAll(clipBoard);
             clearSecondaryPointFoci();
             initializeVisualNodes();
-            for(Point p : clipBoard){
+            for (Point p : clipBoard) {
               p.setFloor((int) floorChoiceBox.getValue());
               addPointToSecondarySelection(p);
             }
@@ -1027,6 +1043,7 @@ public class MapViewController extends CentralUIController implements Initializa
             // Cloned again, after being pasted, because they could be pasted more than once
             ListPoints lp = new ListPoints(clipBoard);
             clipBoard = lp.deepClone().getPoints();
+            mapViewPane.setCursor(Cursor.DEFAULT);
           }
         }
       }
@@ -1041,16 +1058,16 @@ public class MapViewController extends CentralUIController implements Initializa
     if (e.isControlDown()) {
       // TODO change size of points
       boolean delta = e.getDeltaY() > 0;
-      if(!delta){
-        if(point_radius >= POINT_RADIUS_MAX){
+      if (!delta) {
+        if (point_radius >= POINT_RADIUS_MAX) {
           point_radius = POINT_RADIUS_MAX;
-        }else{
+        } else {
           point_radius += 1;
         }
-      }else{
-        if(point_radius <= POINT_RADIUS_MIN){
+      } else {
+        if (point_radius <= POINT_RADIUS_MIN) {
           point_radius = POINT_RADIUS_MIN;
-        }else{
+        } else {
           point_radius -= 1;
         }
       }
@@ -1087,10 +1104,10 @@ public class MapViewController extends CentralUIController implements Initializa
           } else {
             setPointFocus(p);
           }
-        }else{
-          if(e.isControlDown()){
+        } else {
+          if (e.isControlDown()) {
 
-          }else{
+          } else {
             setPointFocus(p);
           }
         }
@@ -1098,9 +1115,14 @@ public class MapViewController extends CentralUIController implements Initializa
         if (e.isShiftDown()) {
           if (mapViewFlag > 2) {
             // Ensure that it does not get connected to itself or a repeat connection
-            if (!p.equals(pointFocus) && !p.getNeighbors().contains(pointFocus)) {
-              p.connectTo(pointFocus);
-              addVisualConnection(new Connection(p, pointFocus));
+            if (!p.equals(pointFocus) && pointFocus != null) {
+              if (p.getNeighbors().contains(pointFocus)) {
+                p.severFrom(pointFocus);
+                removeVisualConnection(new Connection(p, pointFocus));
+              } else {
+                p.connectTo(pointFocus);
+                addVisualConnection(new Connection(p, pointFocus));
+              }
             }
           }
         }
