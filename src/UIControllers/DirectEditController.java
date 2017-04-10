@@ -24,12 +24,13 @@ import javafx.stage.Stage;
  */
 public class DirectEditController extends CentralUIController implements Initializable {
   private int selectedHPIndex;
-  private boolean locationShown;
   private Physician selectedHP = null;
+  private ChoiceBox<String> selectedCB = null;
   private ArrayList<Physician> docs;
   private ArrayList<Point> rooms;
   private ArrayList<String> roomNames;
   private ArrayList<String> docNames;
+  private ArrayList<ChoiceBox> locations;
 
   @FXML
   private Pane DirectEdit;
@@ -40,22 +41,17 @@ public class DirectEditController extends CentralUIController implements Initial
   @FXML
   private TextField Title;
   @FXML
-  private ChoiceBox Location1;
-  @FXML
-  private ChoiceBox Location2;
-  @FXML
-  private ChoiceBox Location3;
-  @FXML
-  private ChoiceBox Location4;
-  @FXML
-  private ChoiceBox Location5;
-  @FXML
-  private ChoiceBox Location6;
-  @FXML
   private ListView<String> Directory;
-
+  @FXML
+  private ListView<ChoiceBox> Locations;
+  @FXML
+  private Button AddLocation;
+  @FXML
+  private Button RemoveLocation;
   @FXML
   private AnchorPane anchorPane;
+
+
   @FXML
   private Button DirectBack;
   @FXML
@@ -78,13 +74,23 @@ public class DirectEditController extends CentralUIController implements Initial
   private Button DirectDelete;
 
   @Override
-  public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+  public void customListenerX () {
+    DirectLogoff.setLayoutX(x_res - 155);
+  }
+  @Override
+  public void customListenerY () {
 
-    rooms = new ArrayList<Point>();
-    docs = new ArrayList<Physician>();
-    roomNames = new ArrayList<String>();
-    docNames = new ArrayList<String>();
-    locationShown = false;
+  }
+
+  @Override
+  public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    addResolutionListener(anchorPane);
+    setBackground(anchorPane);
+
+    rooms = new ArrayList<>();
+    docs = new ArrayList<>();
+    roomNames = new ArrayList<>();
+    docNames = new ArrayList<>();
     // get list of rooms
     Point a1 = new Point(0, 0, "a");
     Point a2 = new Point(0, 0, "b");
@@ -107,11 +113,9 @@ public class DirectEditController extends CentralUIController implements Initial
     docs.add(b3);
     docs.add(b4);
 
-
     // load all docs
     refreshDir();
 
-    roomNames.add("None");
     for (Point n : rooms) {
       roomNames.add(n.getName());
     }
@@ -127,21 +131,19 @@ public class DirectEditController extends CentralUIController implements Initial
               selectedHPIndex = clicked;
               selectedHP = docs.get(selectedHPIndex);
             }
-
-            // fill location selectors
-            if (!locationShown) {
-              displayLoc();
-              locationShown = true;
-            }
+            refreshLoc();
             // set text field
             refreshInfo();
-
-            // set location selectors
-            refreshLoc();
-
           }
         });
-
+    Locations.getSelectionModel().selectedItemProperty().addListener(
+        new ChangeListener<ChoiceBox>() {
+          @Override
+          public void changed(ObservableValue<? extends ChoiceBox> observable, ChoiceBox oldValue,
+              ChoiceBox newValue) {
+            selectedCB = newValue;
+          }
+        });
   }
 
   @FXML
@@ -149,32 +151,46 @@ public class DirectEditController extends CentralUIController implements Initial
     mapViewFlag = 3;
     Stage primaryStage = (Stage) DirectEdit.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/MapScene.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/MapScene.fxml");
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  public void displayLoc () {
-    Location1.setItems(FXCollections.observableList(roomNames));
-    Location2.setItems(FXCollections.observableList(roomNames));
-    Location3.setItems(FXCollections.observableList(roomNames));
-    Location4.setItems(FXCollections.observableList(roomNames));
-    Location5.setItems(FXCollections.observableList(roomNames));
-    Location6.setItems(FXCollections.observableList(roomNames));
+
+  private void refreshLoc () {
+    int i = 0;
+    locations = new ArrayList<>();
+    for (Point p : selectedHP.getLocations()) {
+      ChoiceBox<String> cb = new ChoiceBox<>();
+      cb.setItems(FXCollections.observableList(roomNames));
+      Point temp = selectedHP.getLocations().get(i);
+      cb.setValue(temp.getName());
+      locations.add(cb);
+      i++;
+    }
+    Locations.setItems(FXCollections.observableList(locations));
   }
 
-  public void clearLoc () {
-    Location1.setItems(FXCollections.observableList(new ArrayList<String>()));
-    Location2.setItems(FXCollections.observableList(new ArrayList<String>()));
-    Location3.setItems(FXCollections.observableList(new ArrayList<String>()));
-    Location4.setItems(FXCollections.observableList(new ArrayList<String>()));
-    Location5.setItems(FXCollections.observableList(new ArrayList<String>()));
-    Location6.setItems(FXCollections.observableList(new ArrayList<String>()));
+
+  private void clearLoc () {
+    Locations.setItems(FXCollections.observableList(new ArrayList<>()));
   }
 
-  public void refreshDir () {
-    docNames = new ArrayList<String>();
+  public void addLocation () {
+    ChoiceBox<String> cb = new ChoiceBox<>();
+    cb.setItems(FXCollections.observableList(roomNames));
+    locations.add(cb);
+    Locations.setItems(FXCollections.observableList(locations));
+  }
+
+  public void removeLocation () {
+    locations.remove(selectedCB);
+    Locations.setItems(FXCollections.observableList(locations));
+  }
+
+  private void refreshDir () {
+    docNames = new ArrayList<>();
     for (Physician doc : docs) {
       String aDoc = doc.getFirstName() + ", " + doc.getLastName() + " " + Long.toString(doc.getID());
       docNames.add(aDoc);
@@ -183,78 +199,34 @@ public class DirectEditController extends CentralUIController implements Initial
     Directory.setItems(FXCollections.observableList(docNames));
   }
 
-  public void refreshInfo () {
+  private void refreshInfo () {
     LastName.setText(selectedHP.getLastName());
     FirstName.setText(selectedHP.getFirstName());
     Title.setText(selectedHP.getTitle());
   }
 
-  public void clearInfo () {
+  private void clearInfo () {
     LastName.setText("");
     FirstName.setText("");
     Title.setText("");
   }
 
-  public void refreshLoc () {
-    Point temp;
-    try {
-      temp = selectedHP.getLocations().get(0);
-      Location1.setValue(temp.getName());
-    } catch (IndexOutOfBoundsException e) {
-      Location1.setValue("None");
+  private ArrayList<Point> finalLocs () {
+    ArrayList<Point> ret = new ArrayList<>();
+    for (ChoiceBox cb : locations) {
+      addtoFinalLocs(ret, cb);
     }
-    try {
-      temp = selectedHP.getLocations().get(1);
-      Location2.setValue(temp.getName());
-    } catch (IndexOutOfBoundsException e) {
-      Location2.setValue("None");
-    }
-    try {
-      temp = selectedHP.getLocations().get(2);
-      Location3.setValue(temp.getName());
-    } catch (IndexOutOfBoundsException e) {
-      Location3.setValue("None");
-    }
-    try {
-      temp = selectedHP.getLocations().get(3);
-      Location4.setValue(temp.getName());
-    } catch (IndexOutOfBoundsException e) {
-      Location4.setValue("None");
-    }
-    try {
-      temp = selectedHP.getLocations().get(4);
-      Location5.setValue(temp.getName());
-    } catch (IndexOutOfBoundsException e) {
-      Location5.setValue("None");
-    }
-    try {
-      temp = selectedHP.getLocations().get(5);
-      Location6.setValue(temp.getName());
-    } catch (IndexOutOfBoundsException e) {
-      Location6.setValue("None");
-    }
-  }
-
-
-  public ArrayList<Point> finalLocs () {
-    ArrayList<Point> ret = new ArrayList<Point>();
-    addtoFinalLocs(ret, Location1);
-    addtoFinalLocs(ret, Location2);
-    addtoFinalLocs(ret, Location3);
-    addtoFinalLocs(ret, Location4);
-    addtoFinalLocs(ret, Location5);
-    addtoFinalLocs(ret, Location6);
     return ret;
   }
 
-  public void addtoFinalLocs(ArrayList<Point> ret, ChoiceBox L) {
+  private void addtoFinalLocs(ArrayList<Point> ret, ChoiceBox L) {
     for (Point n : rooms) {
-      if (L.getValue().toString().equals("None")) {
-        break;
-      }
-      if (n.getName().equals(L.getValue().toString())){
-        ret.add(n);
-        break;
+      try {
+        if (n.getName().equals(L.getValue().toString())) {
+          ret.add(n);
+        }
+      } catch (NullPointerException e) {
+        continue;
       }
     }
   }
@@ -267,16 +239,13 @@ public class DirectEditController extends CentralUIController implements Initial
       selectedHP.setTitle(Title.getText());
       selectedHP.setLocations(finalLocs());
       // check if it's a new Physician
-      System.out.println(Integer.toString(selectedHPIndex));
       if (selectedHPIndex >= docs.size()) {
         docs.add(selectedHP);
       } else {
         docs.set(selectedHPIndex, selectedHP);
       }
-      // save docs to DB
       // refresh the page
       refreshInfo();
-      refreshLoc();
       refreshDir();
       Directory.getSelectionModel().select(selectedHPIndex);
 
@@ -297,14 +266,10 @@ public class DirectEditController extends CentralUIController implements Initial
   public void create () {
     Directory.getSelectionModel().select(-1);
     long newPID = docs.get(docs.size() - 1).getID() + 1;
-    selectedHP = new Physician("", "", "", newPID, new ArrayList<Point>());
+    selectedHP = new Physician("", "", "", newPID, new ArrayList<>());
     selectedHPIndex = docs.size();
     refreshInfo();
     refreshLoc();
-    if (!locationShown){
-      displayLoc();
-      locationShown = true;
-    }
   }
 
   public void delete () {
@@ -312,15 +277,15 @@ public class DirectEditController extends CentralUIController implements Initial
     refreshDir();
     clearLoc();
     clearInfo();
-    locationShown = false;
+    selectedHP = null;
   }
 
   public void back () {
     Stage primaryStage = (Stage) DirectEdit.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/AdminLogin.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/AdminLogin.fxml");
     } catch (Exception e) {
-      System.out.println("Cannot load main menu");
+      System.out.println("Cannot load admin login menu");
       e.printStackTrace();
     }
   }
@@ -328,7 +293,7 @@ public class DirectEditController extends CentralUIController implements Initial
   public void logoff () {
     Stage primaryStage = (Stage) DirectEdit.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/MainMenu.fxml");
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();

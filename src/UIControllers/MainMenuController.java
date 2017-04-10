@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -26,6 +28,8 @@ public class MainMenuController extends CentralUIController implements Initializ
   private ChoiceBox langBox;
   @FXML
   private AnchorPane anchorPane;
+  @FXML
+  private ImageView MainKey;
 
   @FXML
   private Button MapButton;
@@ -34,27 +38,30 @@ public class MainMenuController extends CentralUIController implements Initializ
 
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     chooseLang();
+    addResolutionListener(anchorPane);
+    setBackground(anchorPane);
+  }
 
-    anchorPane.widthProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-        System.out.println("Width: " + newSceneWidth);
-      }
-    });
-    anchorPane.heightProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
-        System.out.println("Height: " + newSceneHeight);
-      }
-    });
+  @Override
+  public void customListenerX () {
+    MapButton.setLayoutX(5*(x_res/7) - 175);
+    SearchButton.setLayoutX(2*(x_res/7) - 175);
+    MainKey.setLayoutX(x_res - 150);
 
+  }
+  @Override
+  public void customListenerY () {
+    MainKey.setLayoutY(y_res - 57);
+    MapButton.setLayoutY(6*(y_res/11) - 160);
+    SearchButton.setLayoutY(6*(y_res/11) - 160);
+    langBox.setLayoutY(y_res - 50);
   }
 
   public void gotoMap () {
     Stage primaryStage = (Stage) MainMenu.getScene().getWindow();
     try {
       mapViewFlag = 2;
-      loadScene(primaryStage, "/MapScene.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/MapScene.fxml");
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -63,7 +70,7 @@ public class MainMenuController extends CentralUIController implements Initializ
   public void gotoSearch () {
     Stage primaryStage = (Stage) MainMenu.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/SearchMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/SearchMenu.fxml");
     } catch (Exception e) {
     }
   }
@@ -71,7 +78,7 @@ public class MainMenuController extends CentralUIController implements Initializ
   public void gotoAdmin () {
     Stage primaryStage = (Stage) MainMenu.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/AdminLogin.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/AdminLogin.fxml");
     } catch (Exception e) {
     }
   }

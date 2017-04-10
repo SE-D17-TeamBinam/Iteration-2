@@ -1,6 +1,7 @@
 package UIControllers;
 
 import javafx.event.Event;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -27,7 +28,7 @@ public class AdminLoginController extends CentralUIController implements Initial
   @FXML
   private Pane AdminLogin;
   @FXML
-  private javafx.scene.control.TextField AdminNameField;
+  private TextField AdminNameField;
   @FXML
   private PasswordField AdminPassField;
 
@@ -49,11 +50,30 @@ public class AdminLoginController extends CentralUIController implements Initial
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     /* apply language configs */
-    System.out.println(currSession.getLanguage().toString());
     AdminBack.setText(dictionary.getString("Back", currSession.getLanguage()));
     AdminNameLabel.setText(dictionary.getString("Username", currSession.getLanguage()));
+    addResolutionListener(anchorPane);
+    setBackground(anchorPane);
   }
 
+  @Override
+  public void customListenerX () {
+    AdminNameLabel.setLayoutX(x_res/2 - 540);
+    AdminPassLabel.setLayoutX(x_res/2 - 540);
+    AdminLoginButton.setLayoutX(x_res/2 - 57.5);
+    AdminNameField.setLayoutX(x_res/2 - 20);
+    AdminPassField.setLayoutX(x_res/2 - 20);
+    LoginError.setLayoutX(x_res/2 - 170);
+  }
+  @Override
+  public void customListenerY () {
+    AdminNameLabel.setLayoutY(4*y_res/11);
+    AdminPassLabel.setLayoutY(6*y_res/11);
+    AdminLoginButton.setLayoutY(8*y_res/11);
+    AdminNameField.setLayoutY(4*y_res/11);
+    AdminPassField.setLayoutY(6*y_res/11);
+    LoginError.setLayoutY(7*y_res/11 + 10);
+  }
 
   // Detects if a key is pressed when the username, password, or login button are highlighted
   // If the key pressed is the ENTER key, then it attempts to login with the current input
@@ -76,7 +96,7 @@ public class AdminLoginController extends CentralUIController implements Initial
     if (credentialManager.userIsAdmin(enteredName, enteredPass))  {
       LoginError.setVisible(false);
       try {
-        loadScene(primaryStage, "/DirectEdit.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+        loadScene(primaryStage, "/DirectEdit.fxml");
       } catch (Exception e) {
         System.out.println("Cannot load directory editor");
         e.printStackTrace();
@@ -92,7 +112,7 @@ public class AdminLoginController extends CentralUIController implements Initial
   public void back () {
     Stage primaryStage = (Stage) AdminLogin.getScene().getWindow();
     try {
-      loadScene(primaryStage, "/MainMenu.fxml", (int) anchorPane.getWidth(), (int) anchorPane.getHeight());
+      loadScene(primaryStage, "/MainMenu.fxml");
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();

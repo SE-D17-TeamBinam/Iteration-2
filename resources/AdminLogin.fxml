@@ -4,8 +4,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
@@ -14,21 +12,6 @@
    <children>
       <Pane fx:id="AdminLogin" prefHeight="750" prefWidth="1300" style="-fx-background-color: transparent;">
          <children>
-            <ImageView fx:id="AdminBackground" fitHeight="379.0" fitWidth="1300.0" layoutY="300.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@icons/background_shapte.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="AdminBanner" fitHeight="160.0" fitWidth="1300.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@icons/banner.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="AdminLogo" fitHeight="82.0" fitWidth="496.0" layoutX="410.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@icons/BWFH_logo_rgb.jpg" />
-               </image>
-            </ImageView>
             <Button fx:id="AdminBack" layoutX="5.0" layoutY="5.0" mnemonicParsing="false" onMouseClicked="#back" prefHeight="75.0" prefWidth="150.0" text="Back">
                <font>
                   <Font size="26.0" />
@@ -50,7 +33,7 @@
                <font>
                   <Font size="20.0" />
                </font></PasswordField>
-            <Button fx:id="AdminLoginButton" layoutX="593.0" layoutY="550.0" mnemonicParsing="false" onKeyPressed="#tryLogin" onMouseClicked="#login" text="Login">
+            <Button fx:id="AdminLoginButton" layoutX="593.0" layoutY="550.0" mnemonicParsing="false" onKeyPressed="#tryLogin" onMouseClicked="#login" prefHeight="65.0" prefWidth="115.0" text="Login">
                <font>
                   <Font size="30.0" />
                </font></Button>
