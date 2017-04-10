@@ -11,6 +11,9 @@ import org.Point;
  * This Object will add, remove and edit our hospital database
  */
 public class DatabaseEditor implements DatabaseInterface{
+  ArrayList<Point> localPoints;
+  ArrayList<Physician> localPhysicians;
+
 
   DatabaseController dbc = null;
 
