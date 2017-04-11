@@ -8,6 +8,7 @@ import Database.DatabaseInterface;
 import java.sql.SQLException;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javax.xml.crypto.Data;
 
 public class Main extends Application {
 
@@ -31,5 +32,6 @@ public class Main extends Application {
     }
     dbe = new DatabaseController(dbc);
     launch(args);
+    DataController.tearDownTTS();
   }
 }
