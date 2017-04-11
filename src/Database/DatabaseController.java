@@ -299,7 +299,7 @@ public class DatabaseController implements DatabaseInterface {
             "select pid1,pid2 from Neighbor where pid1 = " + pid + " OR pid2 = " + pid).get(0);
         while (res4.next()) {
           int pid1 = res4.getInt("Pid1");
-          int pid2 = res4.getInt("Pid1");
+          int pid2 = res4.getInt("Pid2");
           if (pid1 != my_pid) {
             neighbor_ids.add(pid1);
           } else {
