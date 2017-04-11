@@ -40,6 +40,7 @@ public class MainMenuController extends CentralUIController implements Initializ
     chooseLang();
     addResolutionListener(anchorPane);
     setBackground(anchorPane);
+    CentralController.resetSession();
   }
 
   @Override
