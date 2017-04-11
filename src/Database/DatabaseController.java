@@ -19,6 +19,8 @@ public class DatabaseController implements DatabaseInterface {
   DatabaseDriver dbc = null;
 
   public DatabaseController(DatabaseDriver _dbc) {
+    this.localPhysicians = new ArrayList<Physician>();
+    this.localPoints = new ArrayList<Point>();
     this.dbc = _dbc;
   }
 
@@ -55,7 +57,7 @@ public class DatabaseController implements DatabaseInterface {
     try {
       while (res.next()) {
         if (c > 1) {
-          System.out.println("was not supposed to happen");
+          System.out.println("db error, was not supposed to happen");
           break;
         }
         String first_name = res.getString("FIRST_NAME");
@@ -89,7 +91,8 @@ public class DatabaseController implements DatabaseInterface {
 
 
     } catch (SQLException e) {
-      e.printStackTrace();
+      //e.printStackTrace();
+      System.out.println("error getting fake physcians from DB; Query Erro: " + e.getMessage());
     }
 
     return my_p;
@@ -314,7 +317,9 @@ public class DatabaseController implements DatabaseInterface {
 
       }
     } catch (SQLException e) {
-      e.printStackTrace();
+     // e.printStackTrace();
+      System.out.println("error getting fake points from DB; Query Error: " + e.getMessage());
+
     }
 
     return my_point;
@@ -390,22 +395,28 @@ public class DatabaseController implements DatabaseInterface {
   ///EXTRA DB METHODS
   @Override
   public void load() throws SQLException{
+    System.out.println("loading physicians and points from DB to local copies ");
     localPhysicians = getAllPhysicians();
     localPoints = getAllPoints();
   }
 
   @Override
   public void save() {
+    System.out.println("trying to transfer local copies of physicians and points to DB");
     update_points(localPoints);
+    System.out.println("transferred local points copy");
     try {
       updatePhysicians(localPhysicians);
+      System.out.println("transferred local physicians copy");
     } catch (SQLException e) {
-      e.printStackTrace();
+      //e.printStackTrace();
+      System.out.println("failed to transfer local physicians copy to DB; Error: " + e.getMessage());
     }
   }
 
   @Override
   public ArrayList<Point> getNamedPoints() {
+    System.out.println("trying to get Points with names");
     ArrayList<Point> namedPoints = new ArrayList<Point>();
     int i;
     for(i = 0;i < localPoints.size();i ++ ){
@@ -420,16 +431,19 @@ public class DatabaseController implements DatabaseInterface {
   @Override
   public ArrayList<Point> getPoints() {
     try {
+      System.out.println("requesting points from DB, trying to load" );
       load();
     }
     catch (SQLException e){
-      e.printStackTrace();
+      //e.printStackTrace();
+      System.out.println("Error Getting Data From The Database, failed to load, will return DB local points copy \n Query/Connection Error : " + e.getMessage());
     }
     return localPoints;
   }
 
   @Override
   public void setPoints(ArrayList<Point> points) {
+    System.out.println("Setting the DB local points copy");
     localPoints = points;
     save();
   }
@@ -437,17 +451,20 @@ public class DatabaseController implements DatabaseInterface {
   @Override
   public ArrayList<Physician> getPhysicians() {
     try {
+      System.out.println("requesting physicians from DB, trying to load");
       load();
     } catch (SQLException e) {
-      System.out.println("Error Getting Data From The Database");
-      e.printStackTrace();
+      System.out.println("Error Getting Data From The Database, failed to load, will return DB local physicians copy \n Query/Connection Error : " + e.getMessage());
+      //e.printStackTrace();
     }
     return localPhysicians;
   }
 
   @Override
   public void setPhysicians(ArrayList<Physician> physicians) {
+    System.out.println("Setting the DB local physicians copy");
     localPhysicians = physicians;
     save();
   }
+
 }

@@ -30,12 +30,12 @@ public class DatabaseDriver {
       try {
         this.connect();
       }catch (SQLException e2){
-        System.out.println("Database Connection Error");
-        System.out.println(e.getSQLState());
+        System.out.println("\u001B[31m" + "Database Connection Error" + "\u001B[30m");
+        System.out.println(e.getMessage());
       }
     }
     catch (ClassNotFoundException e){
-      System.out.println("\u001B[31m" + "Could not find Database Driver Jar File, make sure tou add it to the classpath!" + "\u001B[30m");
+      System.out.println("\u001B[31m" + "Could not find Database Driver Jar File, make sure you add it to the classpath!" + "\u001B[30m");
     }
   }
 
@@ -54,23 +54,17 @@ public class DatabaseDriver {
     for (i = 0; i < cList.length; i++) {
       command = cList[i];
       if (command.length() > 2) {
-        System.out.println("command:" + command);
+//        System.out.println("command:" + command);
         try {
           stmt = conn.createStatement();
           rs = stmt.executeQuery(command);
           listrs.add(rs);
-          //return rs;
 
         } catch (SQLException e) {
-          System.out.println("Error Querying, Trying Execute...");
           try {
             stmt.execute(command);
-            //listrs.add(rs);
-            System.out.println("Executed Successfully");
-
           } catch (SQLException e2) {
-            e.printStackTrace();
-            System.out.println("Query Error: " + e.getSQLState());
+            System.out.println(e2.getMessage());
           }
         }
       }
