@@ -351,6 +351,9 @@ public class DatabaseEditor implements DatabaseInterface {
     return true;
   }
 
+
+
+  ///EXTRA DB METHODS
   @Override
   public void load() throws SQLException{
     localPhysicians = getAllPhysicians();
@@ -359,22 +362,36 @@ public class DatabaseEditor implements DatabaseInterface {
 
   @Override
   public void save() {
-
+    update_points(localPoints);
+    try {
+      updatePhysicians(localPhysicians);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
   public ArrayList<Point> getNamedPoints() {
-    return null;
+    ArrayList<Point> namedPoints = new ArrayList<Point>();
+    int i;
+    for(i = 0;i < localPoints.size();i ++ ){
+      if(!(localPoints.get(i).getName().replaceAll("\\s","") == "")){
+        namedPoints.add(localPoints.get(i));
+      }
+    }
+
+    return namedPoints;
   }
 
   @Override
   public ArrayList<Point> getPoints() {
-    return null;
+    return localPoints;
   }
 
   @Override
   public void setPoints(ArrayList<Point> points) {
-
+    localPoints = points;
+    save();
   }
 
   @Override
@@ -390,6 +407,7 @@ public class DatabaseEditor implements DatabaseInterface {
 
   @Override
   public void setPhysicians(ArrayList<Physician> physicians) {
-
+    localPhysicians = physicians;
+    save();
   }
 }
