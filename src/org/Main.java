@@ -5,14 +5,14 @@ import static javafx.application.Application.launch;
 import Database.DatabaseDriver;
 import Database.DatabaseController;
 import Database.DatabaseInterface;
+import java.sql.SQLException;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
-  DatabaseDriver dbc = new DatabaseDriver("org.apache.derby.jdbc.EmbeddedDriver",
-      "jdbc:derby:testDB;create=true");
-  DatabaseInterface dbe = new DatabaseController(dbc);
+  static DatabaseDriver dbc;
+  static DatabaseInterface dbe;
 
 
   @Override
@@ -22,6 +22,14 @@ public class Main extends Application {
   }
 
   public static void main(String[] args) {
+    try {
+      dbc = new DatabaseDriver("org.apache.derby.jdbc.EmbeddedDriver",
+          "jdbc:derby:testDB;create=true");
+    }
+    catch (Exception e){
+      e.printStackTrace();
+    }
+    dbe = new DatabaseController(dbc);
     launch(args);
   }
 }

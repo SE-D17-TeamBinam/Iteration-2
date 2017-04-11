@@ -19,20 +19,11 @@ public class DatabaseDriver {
   private String url = "";
   private String driver = "";
 
-  public DatabaseDriver(String _driver, String _url) {
+  public DatabaseDriver(String _driver, String _url) throws SQLException, ClassNotFoundException{
     this.url = _url;
     this.driver = _driver;
-    try {
-      this.registerDriver();
-      this.connect();
-    } catch (SQLException e) {
-      e.printStackTrace();
-      System.out.println("SQL Exception Occurred, check that the url is correct");
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-      System.out.println(
-          "Class Not Found Exception Occurred, check that the driver is correct and installed");
-    }
+    this.registerDriver();
+    this.connect();
   }
 
   public String[] Parser(String commands) {
