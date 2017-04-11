@@ -419,6 +419,12 @@ public class DatabaseEditor implements DatabaseInterface {
 
   @Override
   public ArrayList<Point> getPoints() {
+    try {
+      load();
+    }
+    catch (SQLException e){
+      e.printStackTrace();
+    }
     return localPoints;
   }
 
