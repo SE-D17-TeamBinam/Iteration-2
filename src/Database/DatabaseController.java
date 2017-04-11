@@ -252,7 +252,7 @@ public class DatabaseController implements DatabaseInterface {
     for (int q = 0; q < rpal.size(); q++) {
       al.add(new FakePoint(rpal.get(q)));
     }
-    dbc.send_Command("truncate table Point;");
+    dbc.send_Command("truncate table Point;truncate table Neighbor;");
     int i;
     for (i = 0; i < al.size(); i++) {
       this.addPoint(al.get(i));
