@@ -20,4 +20,12 @@ public class CentralController {
     uiController.setSession(currSession);
     uiController.restartUI(primaryStage);
   }
+
+  public static Session getCurrSession(){
+    return currSession;
+  }
+
+  public static void resetSession(){
+    currSession = new Session();
+  }
 }
