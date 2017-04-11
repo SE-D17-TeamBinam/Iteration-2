@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 
 
-public class VerticalPoint extends Point{
+public abstract class VerticalPoint extends Point{
 
   VerticalPoint(int xCoord, int yCoord, String name, int id, ArrayList<Point> new_neighbors, int floor){
     super(xCoord, yCoord, name, id, new_neighbors, floor);
