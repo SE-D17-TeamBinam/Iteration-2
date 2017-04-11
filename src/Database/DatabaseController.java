@@ -19,6 +19,8 @@ public class DatabaseController implements DatabaseInterface {
   DatabaseDriver dbc = null;
 
   public DatabaseController(DatabaseDriver _dbc) {
+    this.localPhysicians = new ArrayList<Physician>();
+    this.localPoints = new ArrayList<Point>();
     this.dbc = _dbc;
   }
 
