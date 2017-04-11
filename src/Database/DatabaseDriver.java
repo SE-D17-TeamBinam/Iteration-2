@@ -19,11 +19,24 @@ public class DatabaseDriver {
   private String url = "";
   private String driver = "";
 
-  public DatabaseDriver(String _driver, String _url) throws SQLException, ClassNotFoundException{
+  public DatabaseDriver(String _driver, String _url){
     this.url = _url;
     this.driver = _driver;
-    this.registerDriver();
-    this.connect();
+    try {
+      this.registerDriver();
+      this.connect();
+    }catch (SQLException e){
+      System.out.println("Error Connecting To DB, Trying Again");
+      try {
+        this.connect();
+      }catch (SQLException e2){
+        System.out.println("Database Connection Error");
+        System.out.println(e.getSQLState());
+      }
+    }
+    catch (ClassNotFoundException e){
+      System.out.println("\u001B[31m" + "Could not find Database Driver Jar File, make sure tou add it to the classpath!" + "\u001B[30m");
+    }
   }
 
   public String[] Parser(String commands) {
@@ -57,7 +70,7 @@ public class DatabaseDriver {
 
           } catch (SQLException e2) {
             e.printStackTrace();
-            System.out.println("Query Error!");
+            System.out.println("Query Error: " + e.getSQLState());
           }
         }
       }
@@ -71,7 +84,7 @@ public class DatabaseDriver {
     return true;
   }
 
-  private boolean connect() throws SQLException {
+  boolean connect() throws SQLException {
     conn = DriverManager.getConnection(url);
     return true;
   }
