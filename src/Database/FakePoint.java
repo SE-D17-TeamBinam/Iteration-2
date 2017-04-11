@@ -45,17 +45,17 @@ public class FakePoint {
   }
 
   public FakePoint(Point equivalent) {
-    this.xCoord = equivalent.xCoord;
-    this.yCoord = equivalent.yCoord;
-    this.name = equivalent.name;
-    this.id = equivalent.id;
-    if (equivalent.parent == null) {
+    this.xCoord = equivalent.getXCoord();
+    this.yCoord = equivalent.getYCoord();
+    this.name = equivalent.getName();
+    this.id = equivalent.getId();
+    if (equivalent.getParent() == null) {
       this.parent = -1;
     } else {
-      this.parent = equivalent.parent.id;
+      this.parent = equivalent.getParent().getId();
     }
-    this.cost = equivalent.cost;
-    this.floor = equivalent.floor;
+    this.cost = equivalent.getCost();
+    this.floor = equivalent.getFloor();
     for (int i = 0; i < equivalent.neighbors.size(); i ++){
       this.neighbors.add(equivalent.neighbors.get(i).getId());
     }

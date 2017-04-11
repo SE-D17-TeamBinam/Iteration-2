@@ -33,7 +33,7 @@ public class DatabaseEditor implements DatabaseInterface {
     return true;
   }
 
-  public boolean addPhysician(int PID, String first_name, String last_name, String title,
+  public boolean addPhysician(long PID, String first_name, String last_name, String title,
       ArrayList<FakePoint> array_points) {
     dbc.send_Command(
         "insert into physician (pid,first_name, last_name, title) values (" + PID + ",'"
@@ -47,10 +47,10 @@ public class DatabaseEditor implements DatabaseInterface {
     return true;
   }
 
-  public Physician get_physician(int pid) {
+  public FakePhysician get_physician(int pid) {
     ResultSet res = dbc.send_Command("select * from physician where pid = " + pid).get(0);
     int c = 0;
-    Physician my_p = null;
+    FakePhysician my_p = null;
     c++;
     try {
       while (res.next()) {
@@ -63,7 +63,7 @@ public class DatabaseEditor implements DatabaseInterface {
         String title = res.getString("TITLE");
         int new_pid = res.getInt("PID");
 
-        my_p = new Physician(first_name, last_name, title, pid, new ArrayList<FakePoint>());
+        my_p = new FakePhysician(first_name, last_name, title, pid, new ArrayList<Integer>());
         //physicians.add(p);
 
       }
@@ -78,10 +78,10 @@ public class DatabaseEditor implements DatabaseInterface {
       ResultSet res2 = dbc.send_Command("select * from physician_location where pid_ph = " + pid)
           .get(0);
 
-      ArrayList<FakePoint> my_locs = new ArrayList<FakePoint>();
+      ArrayList<Integer> my_locs = new ArrayList<Integer>();
       while (res2.next()) {
         int new_pid2 = res2.getInt("PID_po");
-        my_locs.add(get_point(new_pid2));
+        my_locs.add(get_point(new_pid2).getId());
 
       }
       res2.close();
@@ -99,17 +99,46 @@ public class DatabaseEditor implements DatabaseInterface {
 
 
   public ArrayList<Physician> getAllPhysicians() throws SQLException {
-    ArrayList<Physician> physicians = new ArrayList<Physician>();
+    ArrayList<FakePhysician> fphysicians = new ArrayList<FakePhysician>();
     ResultSet res = dbc.send_Command("select pid from physician").get(0);
     while (res.next()) {
       int pid = res.getInt("PID");
 
-      Physician p = get_physician(pid);
-      physicians.add(p);
+      FakePhysician p = get_physician(pid);
+      fphysicians.add(p);
     }
-
+    ArrayList<Physician> physicians = new ArrayList<Physician>();
+    for(int i = 0; i < fphysicians.size(); i ++ ){
+      physicians.add(fphysicians.get(i).toRealPhysician());
+    }
+    for (int i = 0; i < physicians.size(); i++) {
+      ArrayList<Integer> currentLocations = findFakePhysician(physicians.get(i), fphysicians).getLocations();
+      ArrayList<Point> locations = new ArrayList<Point>();
+      for (int j = 0; j < currentLocations.size(); j++) {
+        locations.add(findRealPoint(currentLocations.get(j),localPoints));
+      }
+      physicians.get(i).setLocations(locations);
+    }
     return physicians;
 
+  }
+
+  private FakePhysician findFakePhysician (Physician p, ArrayList<FakePhysician> fps) {
+    for (int i = 0; i < fps.size(); i++) {
+      if (p.getID() == fps.get(i).getID()) {
+        return fps.get(i);
+      }
+    }
+    return null;
+  }
+
+  private Physician findRealPhysician(int p, ArrayList<Physician> pts) {
+    for (int i = 0; i < pts.size(); i++) {
+      if (p == pts.get(i).getID()) {
+        return pts.get(i);
+      }
+    }
+    return null;
   }
 
 
@@ -117,8 +146,13 @@ public class DatabaseEditor implements DatabaseInterface {
     dbc.send_Command("truncate table Physician; truncate table Physician_location;");
     int i;
     for (i = 0; i < ap.size(); i++) {
+      ArrayList<Point> points = ap.get(i).getLocations();
+      ArrayList<FakePoint> fakePoints = new ArrayList<FakePoint>();
+      for (int j = 0; j < points.size(); j++){
+        fakePoints.add(new FakePoint(points.get(j)));
+      }
       this.addPhysician(ap.get(i).getID(), ap.get(i).getFirstName(), ap.get(i).getLastName(),
-          ap.get(i).getTitle(), ap.get(i).getLocations());
+          ap.get(i).getTitle(), fakePoints);
     }
 
     return true;
@@ -148,7 +182,7 @@ public class DatabaseEditor implements DatabaseInterface {
   /// Location - Physician //
   ///////////////////////////
 
-  public boolean addPhysicianLocation(int pid_ph, int pid_po) {
+  public boolean addPhysicianLocation(long pid_ph, int pid_po) {
     dbc.send_Command(
         "insert into Physician_Location (pid_po,pid_ph) values(" + pid_po + "," + pid_ph
             + ");\n");
@@ -317,7 +351,7 @@ public class DatabaseEditor implements DatabaseInterface {
 
   private FakePoint findFakePoint(Point p, ArrayList<FakePoint> fps) {
     for (int i = 0; i < fps.size(); i++) {
-      if (p.id == fps.get(i).getId()) {
+      if (p.getId() == fps.get(i).getId()) {
         return fps.get(i);
       }
     }
@@ -326,7 +360,7 @@ public class DatabaseEditor implements DatabaseInterface {
 
   private Point findRealPoint(int p, ArrayList<Point> pts) {
     for (int i = 0; i < pts.size(); i++) {
-      if (p == pts.get(i).id) {
+      if (p == pts.get(i).getId()) {
         return pts.get(i);
       }
     }

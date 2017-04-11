@@ -69,6 +69,18 @@ public class Point {
     this.floor = floor;
   }
 
+  public int getId(){
+    return id;
+  }
+
+  public int getCost() {
+    return cost;
+  }
+
+  public Point getParent() {
+    return parent;
+  }
+
   public int getFloor() {
     return floor;
   }
