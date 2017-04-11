@@ -1,8 +1,10 @@
 package UIControllers;
 
 import javafx.event.Event;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import org.Dictionary;
 import CredentialManager.CredentialManager;
 import java.net.URL;
@@ -26,7 +28,7 @@ public class AdminLoginController extends CentralUIController implements Initial
   @FXML
   private Pane AdminLogin;
   @FXML
-  private javafx.scene.control.TextField AdminNameField;
+  private TextField AdminNameField;
   @FXML
   private PasswordField AdminPassField;
 
@@ -42,15 +44,36 @@ public class AdminLoginController extends CentralUIController implements Initial
   @FXML
   private Label LoginError;
 
+  @FXML
+  private AnchorPane anchorPane;
+
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     /* apply language configs */
-    System.out.println(currLang);
-    Dictionary d = new Dictionary();
-    AdminBack.setText(d.getString("Back", currLang));
-    AdminNameLabel.setText(d.getString("Username", currLang));
+    AdminBack.setText(dictionary.getString("Back", currSession.getLanguage()));
+    AdminNameLabel.setText(dictionary.getString("Username", currSession.getLanguage()));
+    addResolutionListener(anchorPane);
+    setBackground(anchorPane);
   }
 
+  @Override
+  public void customListenerX () {
+    AdminNameLabel.setLayoutX(x_res/2 - 540);
+    AdminPassLabel.setLayoutX(x_res/2 - 540);
+    AdminLoginButton.setLayoutX(x_res/2 - 57.5);
+    AdminNameField.setLayoutX(x_res/2 - 20);
+    AdminPassField.setLayoutX(x_res/2 - 20);
+    LoginError.setLayoutX(x_res/2 - 170);
+  }
+  @Override
+  public void customListenerY () {
+    AdminNameLabel.setLayoutY(4*y_res/11);
+    AdminPassLabel.setLayoutY(6*y_res/11);
+    AdminLoginButton.setLayoutY(8*y_res/11);
+    AdminNameField.setLayoutY(4*y_res/11);
+    AdminPassField.setLayoutY(6*y_res/11);
+    LoginError.setLayoutY(7*y_res/11 + 10);
+  }
 
   // Detects if a key is pressed when the username, password, or login button are highlighted
   // If the key pressed is the ENTER key, then it attempts to login with the current input
@@ -70,8 +93,7 @@ public class AdminLoginController extends CentralUIController implements Initial
     Stage primaryStage = (Stage) AdminLogin.getScene().getWindow();
     String enteredName = AdminNameField.getText();
     String enteredPass = AdminPassField.getText();
-    CredentialManager cm = new CredentialManager();
-    if (cm.userIsAdmin(enteredName, enteredPass)) {
+    if (credentialManager.userIsAdmin(enteredName, enteredPass))  {
       LoginError.setVisible(false);
       try {
         loadScene(primaryStage, "/DirectEdit.fxml");
@@ -90,7 +112,7 @@ public class AdminLoginController extends CentralUIController implements Initial
   public void back () {
     Stage primaryStage = (Stage) AdminLogin.getScene().getWindow();
     try {
-      restartUI(primaryStage);
+      loadScene(primaryStage, "/MainMenu.fxml");
     } catch (Exception e) {
       System.out.println("Cannot load main menu");
       e.printStackTrace();

@@ -7,9 +7,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.CentralController;
+import org.Language;
 import org.Session;
 
 /**
@@ -22,7 +26,10 @@ public class MainMenuController extends CentralUIController implements Initializ
   private Pane MainMenu;
   @FXML
   private ChoiceBox langBox;
-
+  @FXML
+  private AnchorPane anchorPane;
+  @FXML
+  private ImageView MainKey;
 
   @FXML
   private Button MapButton;
@@ -31,7 +38,24 @@ public class MainMenuController extends CentralUIController implements Initializ
 
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
     chooseLang();
+    addResolutionListener(anchorPane);
+    setBackground(anchorPane);
+    CentralController.resetSession();
+  }
 
+  @Override
+  public void customListenerX () {
+    MapButton.setLayoutX(5*(x_res/7) - 175);
+    SearchButton.setLayoutX(2*(x_res/7) - 175);
+    MainKey.setLayoutX(x_res - 150);
+
+  }
+  @Override
+  public void customListenerY () {
+    MainKey.setLayoutY(y_res - 57);
+    MapButton.setLayoutY(6*(y_res/11) - 160);
+    SearchButton.setLayoutY(6*(y_res/11) - 160);
+    langBox.setLayoutY(y_res - 50);
   }
 
   public void gotoMap () {
@@ -65,17 +89,19 @@ public class MainMenuController extends CentralUIController implements Initializ
     langBox.getItems().add("SPANISH");
     langBox.getItems().add("PORTUGUESE");
 
-
     langBox.getSelectionModel().select(0);
-
     langBox.getSelectionModel().selectedIndexProperty().addListener(
         new ChangeListener<Number>() {
           public void changed(ObservableValue ov, Number old_value, Number new_value) {
-            // Change the language that's being displayed when the input changes
-            System.out.println(Integer.toString(langBox.getSelectionModel().getSelectedIndex()));
-
-           currLang = (String) langBox.getItems().get((int) new_value);
-           System.out.println(currLang);
+            // Change the language that's being displayed when the input changes\
+            if ("ENGLISH".equals((String) langBox.getItems().get((int) new_value))) {
+              currSession.setLanguage(Language.ENGLISH);
+            } else if ("SPANISH".equals((String) langBox.getItems().get((int) new_value))) {
+              currSession.setLanguage(Language.SPANISH);
+            } else if ("PORTUGUESE".equals((String) langBox.getItems().get((int) new_value))) {
+              currSession.setLanguage(Language.PORTUGESE);
+            }
+            System.out.println(currSession.getLanguage());
           }
         });
   }

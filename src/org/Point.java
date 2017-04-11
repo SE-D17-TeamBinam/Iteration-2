@@ -51,6 +51,14 @@ public class Point {
     node.getNeighbors().add(this);
     this.neighbors.add(node);
   }
+
+  public void severFrom(Point point){
+    if(this.neighbors.contains(point)){
+      point.getNeighbors().remove(this);
+      this.neighbors.remove(point);
+    }
+  }
+
   public ArrayList<Point> getNeighbors() {
     return neighbors;
   }
