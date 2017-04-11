@@ -2,17 +2,17 @@ package org;
 
 import static javafx.application.Application.launch;
 
+import Database.DatabaseDriver;
 import Database.DatabaseController;
-import Database.DatabaseEditor;
 import Database.DatabaseInterface;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
-  DatabaseController dbc = new DatabaseController("org.apache.derby.jdbc.EmbeddedDriver",
+  DatabaseDriver dbc = new DatabaseDriver("org.apache.derby.jdbc.EmbeddedDriver",
       "jdbc:derby:testDB;create=true");
-  DatabaseInterface dbe = new DatabaseEditor(dbc);
+  DatabaseInterface dbe = new DatabaseController(dbc);
 
 
   @Override
