@@ -147,7 +147,8 @@ public class DatabaseController implements DatabaseInterface {
 
 
   public boolean updatePhysicians(ArrayList<Physician> ap) throws SQLException {
-    dbc.send_Command("truncate table Physician; truncate table Physician_location;");
+//    dbc.send_Command("truncate table Physician; truncate table Physician_location;");
+    dbc.send_Command("DELETE from Physician where 1=1; DELETE from Physician_location where 1=1");
     int i;
     for (i = 0; i < ap.size(); i++) {
       ArrayList<Point> points = ap.get(i).getLocations();
@@ -256,7 +257,7 @@ public class DatabaseController implements DatabaseInterface {
     for (int q = 0; q < rpal.size(); q++) {
       al.add(new FakePoint(rpal.get(q)));
     }
-    dbc.send_Command("truncate table Point;truncate table Neighbor;");
+    dbc.send_Command("DELETE from Point where 1=1;DELETE from Neighbor 1=1;");
     int i;
     for (i = 0; i < al.size(); i++) {
       this.addPoint(al.get(i));
@@ -496,6 +497,14 @@ public class DatabaseController implements DatabaseInterface {
   @Override
   public void save() {
     System.out.println("trying to transfer local copies of physicians and points to DB");
+    for(Physician p : localPhysicians){
+      ArrayList<Point> locations = p.getLocations();
+      for (int i = 0; i < locations.size(); i ++){
+        if (locations.get(i) == null)
+          locations.remove(i);
+      }
+      p.setLocations(locations);
+    }
     update_points(localPoints);
     System.out.println("transferred local points copy");
     try {
@@ -541,7 +550,8 @@ public class DatabaseController implements DatabaseInterface {
   public void setPoints(ArrayList<Point> points) {
     System.out.println("Setting the DB local points copy");
     localPoints = points;
-    save_and_verify();
+    //save_and_verify();
+    save();
   }
 
   @Override
@@ -562,7 +572,8 @@ public class DatabaseController implements DatabaseInterface {
   public void setPhysicians(ArrayList<Physician> physicians) {
     System.out.println("Setting the DB local physicians copy");
     localPhysicians = physicians;
-    save_and_verify();
+    //save_and_verify();
+    save();
   }
 
 }
