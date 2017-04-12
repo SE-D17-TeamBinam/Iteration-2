@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -37,6 +36,7 @@ public class MainMenuController extends CentralUIController implements Initializ
   private Button SearchButton;
 
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    Session session = new Session();
     chooseLang();
     addResolutionListener(anchorPane);
     setBackground(anchorPane);
@@ -89,7 +89,7 @@ public class MainMenuController extends CentralUIController implements Initializ
     langBox.getItems().add("SPANISH");
     langBox.getItems().add("PORTUGUESE");
 
-    langBox.getSelectionModel().select(0);
+    langBox.getSelectionModel().select(currSession.getLanguage().toString());
     langBox.getSelectionModel().selectedIndexProperty().addListener(
         new ChangeListener<Number>() {
           public void changed(ObservableValue ov, Number old_value, Number new_value) {

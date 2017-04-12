@@ -1,12 +1,5 @@
 package UIControllers;
 
-import javafx.event.Event;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import org.Dictionary;
-import CredentialManager.CredentialManager;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -14,6 +7,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -52,6 +48,8 @@ public class AdminLoginController extends CentralUIController implements Initial
     /* apply language configs */
     AdminBack.setText(dictionary.getString("Back", currSession.getLanguage()));
     AdminNameLabel.setText(dictionary.getString("Username", currSession.getLanguage()));
+    AdminPassLabel.setText(dictionary.getString("Password", currSession.getLanguage()));
+    AdminLoginButton.setText(dictionary.getString("Login", currSession.getLanguage()));
     addResolutionListener(anchorPane);
     setBackground(anchorPane);
   }

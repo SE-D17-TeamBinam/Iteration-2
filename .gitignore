@@ -2,3 +2,5 @@
 *.iml
 *.class
 out/
+testDB/
+derby.log

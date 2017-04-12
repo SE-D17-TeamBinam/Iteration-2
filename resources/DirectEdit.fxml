@@ -33,22 +33,22 @@
                   <Font size="20.0" />
                </font>
             </TextField>
-            <Label layoutX="650.0" layoutY="222.0" prefHeight="28.0" prefWidth="98.0" text="Last Name">
+            <Label fx:id="DirectFirstName" alignment="CENTER_RIGHT" layoutX="622.0" layoutY="220.0" prefHeight="30.0" prefWidth="141.0" text="Last Name" textAlignment="RIGHT">
                <font>
                   <Font size="20.0" />
                </font>
             </Label>
-            <Label layoutX="650.0" layoutY="292.0" prefHeight="28.0" prefWidth="98.0" text="First Name">
+            <Label fx:id="DirectLastName" alignment="CENTER_RIGHT" layoutX="622.0" layoutY="290.0" prefHeight="30.0" prefWidth="141.0" text="First Name" textAlignment="RIGHT">
                <font>
                   <Font size="20.0" />
                </font>
             </Label>
-            <Label layoutX="650.0" layoutY="362.0" prefHeight="28.0" prefWidth="98.0" text="Title">
+            <Label fx:id="DirectTitle" alignment="CENTER_RIGHT" layoutX="622.0" layoutY="360.0" prefHeight="30.0" prefWidth="141.0" text="Title" textAlignment="RIGHT">
                <font>
                   <Font size="20.0" />
                </font>
             </Label>
-            <Label layoutX="650.0" layoutY="432.0" prefHeight="28.0" prefWidth="98.0" text="Locations">
+            <Label fx:id="DirectLocations" alignment="CENTER_RIGHT" layoutX="622.0" layoutY="430.0" prefHeight="30.0" prefWidth="141.0" text="Locations" textAlignment="RIGHT">
                <font>
                   <Font size="20.0" />
                </font>
@@ -68,17 +68,17 @@
                   <Font size="20.0" />
                </font>
             </Button>
-            <Button layoutX="1127.0" layoutY="436.0" mnemonicParsing="false" onMouseClicked="#create" prefHeight="48.0" prefWidth="111.0" text="Create">
+            <Button fx:id="DirectCreate" layoutX="1127.0" layoutY="436.0" mnemonicParsing="false" onMouseClicked="#create" prefHeight="48.0" prefWidth="111.0" text="Create">
                <font>
                   <Font size="20.0" />
                </font>
             </Button>
-            <Button layoutX="1127.0" layoutY="506.0" mnemonicParsing="false" onMouseClicked="#delete" prefHeight="48.0" prefWidth="111.0" text="Delete">
+            <Button fx:id="DirectDelete" layoutX="1127.0" layoutY="506.0" mnemonicParsing="false" onMouseClicked="#delete" prefHeight="48.0" prefWidth="111.0" text="Delete">
                <font>
                   <Font size="20.0" />
                </font>
             </Button>
-            <Button layoutX="1089.0" layoutY="209.0" mnemonicParsing="false" onMouseClicked="#editMap" prefHeight="64.0" prefWidth="149.0" text="Edit Map">
+            <Button fx:id="DirectEditMap" layoutX="1089.0" layoutY="209.0" mnemonicParsing="false" onMouseClicked="#editMap" prefHeight="64.0" prefWidth="149.0" text="Edit Map">
                <font>
                   <Font size="20.0" />
                </font>
