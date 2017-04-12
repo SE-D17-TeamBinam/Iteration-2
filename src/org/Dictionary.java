@@ -267,6 +267,10 @@ public class Dictionary {
 
   /**
    * Gets a string from the given key. Returns an empty string if the key does not exist.
+   *
+   * The way that the string is loaded utilizes a facade pattern because it changes functionality
+   * based on the current state of the system.
+   *
    * @param key: The key given to fetch the corresponding String.
    * @return: Returns the String associated with the key.
    */
