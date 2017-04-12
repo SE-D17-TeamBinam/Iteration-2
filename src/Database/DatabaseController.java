@@ -111,14 +111,15 @@ public class DatabaseController implements DatabaseInterface {
       fphysicians.add(p);
     }
     ArrayList<Physician> physicians = new ArrayList<Physician>();
-    for(int i = 0; i < fphysicians.size(); i ++ ){
+    for (int i = 0; i < fphysicians.size(); i++) {
       physicians.add(fphysicians.get(i).toRealPhysician());
     }
     for (int i = 0; i < physicians.size(); i++) {
-      ArrayList<Integer> currentLocations = findFakePhysician(physicians.get(i), fphysicians).getLocations();
+      ArrayList<Integer> currentLocations = findFakePhysician(physicians.get(i), fphysicians)
+          .getLocations();
       ArrayList<Point> locations = new ArrayList<Point>();
       for (int j = 0; j < currentLocations.size(); j++) {
-        locations.add(findRealPoint(currentLocations.get(j),localPoints));
+        locations.add(findRealPoint(currentLocations.get(j), localPoints));
       }
       physicians.get(i).setLocations(locations);
     }
@@ -126,7 +127,7 @@ public class DatabaseController implements DatabaseInterface {
 
   }
 
-  private FakePhysician findFakePhysician (Physician p, ArrayList<FakePhysician> fps) {
+  private FakePhysician findFakePhysician(Physician p, ArrayList<FakePhysician> fps) {
     for (int i = 0; i < fps.size(); i++) {
       if (p.getID() == fps.get(i).getID()) {
         return fps.get(i);
@@ -151,7 +152,7 @@ public class DatabaseController implements DatabaseInterface {
     for (i = 0; i < ap.size(); i++) {
       ArrayList<Point> points = ap.get(i).getLocations();
       ArrayList<FakePoint> fakePoints = new ArrayList<FakePoint>();
-      for (int j = 0; j < points.size(); j++){
+      for (int j = 0; j < points.size(); j++) {
         fakePoints.add(new FakePoint(points.get(j)));
       }
       this.addPhysician(ap.get(i).getID(), ap.get(i).getFirstName(), ap.get(i).getLastName(),
@@ -317,7 +318,7 @@ public class DatabaseController implements DatabaseInterface {
 
       }
     } catch (SQLException e) {
-     // e.printStackTrace();
+      // e.printStackTrace();
       System.out.println("error getting fake points from DB; Query Error: " + e.getMessage());
 
     }
@@ -390,42 +391,22 @@ public class DatabaseController implements DatabaseInterface {
     return true;
   }
 
-
-
-
   ///////////////////////
   ////EXTRA DB METHODS///
   ///////////////////////
 
-  private boolean compare_physicians_lists(ArrayList<Physician> l1,ArrayList<Physician> l2){
-    int i,j;
-    if(l1.size() != l2.size()){
+  private boolean compare_physicians_lists(ArrayList<Physician> l1, ArrayList<Physician> l2) {
+    int i, j;
+    if (l1.size() != l2.size()) {
+      System.out.println("verification failed not same physician size lists");
       return false;
-    }else{
-      Physician p1,p2;
-      for(i = 0;i < l1.size();i++){
-        for(j = 0;j < l2.size();j++){
-          int k,l;
-          p1 = l1.get(i);
-          p2 = l2.get(j);
-          if(p1.getTitle().compareTo(p2.getTitle()) == 0 && p1.getFirstName().compareTo(p2.getFirstName()) == 0 &&
-              p1.getLastName().compareTo(p2.getLastName()) == 0 && p1.getID() == p2.getID()){
-
-            FakePhysician p3 = new FakePhysician(p1);
-            FakePhysician p4 = new FakePhysician(p2);
-            for(k = 0;k < p3.getLocations().size();k++){
-              for(l = 0;l < p4.getLocations().size();l++){
-                if(! (p3.getLocations().contains(p4.getLocations().get(l))) ){
-                  return false;
-                }
-
-              }
-            }
-
-          }else{
-            return false;
-          }
-
+    } else {
+      Physician p1, p2;
+      for (i = 0; i < l1.size(); i++) {
+        p1 = l1.get(i);
+        p2 = l2.get(i);
+        if (!p1.compareTo(p2)) {
+          return false;
         }
       }
 
@@ -435,37 +416,21 @@ public class DatabaseController implements DatabaseInterface {
   }
 
 
-  private boolean compare_points_lists(ArrayList<Point> l1,ArrayList<Point> l2){
-    int i,j;
-    if(l1.size() != l2.size()){
+  private boolean compare_points_lists(ArrayList<Point> l1, ArrayList<Point> l2) {
+    int i, j;
+    if (l1.size() != l2.size()) {
+      System.out.println("verification failed, different points list size");
       return false;
-    }else{
-      Point p1,p2;
-      for(i = 0;i < l1.size();i++){
-        for(j = 0;j < l2.size();j++){
-          int k,l;
-          p1 = l1.get(i);
-          p2 = l2.get(j);
-          if(p1.getName().compareTo(p2.getName()) == 0 && p1.getCost() == p2.getCost() &&
-              p1.getFloor() == p2.getFloor() && p1.getId() == p2.getId() &&
-              p1.getXCoord() == p2.getYCoord()){
-
-            FakePoint p3 = new FakePoint(p1);
-            FakePoint p4 = new FakePoint(p2);
-            for(k = 0;k < p3.getNeighbors().size();k++){
-              for(l = 0;l < p4.getNeighbors().size();l++){
-                if(! (p3.getNeighbors().contains(p4.getNeighbors().get(l))) ){
-                    return false;
-                }
-
-              }
-            }
-
-          }else{
-            return false;
-          }
-
+    } else {
+      Point p1, p2;
+      for (i = 0; i < l1.size(); i++) {
+        int k, l;
+        p1 = l1.get(i);
+        p2 = l2.get(i);
+        if (!p1.compareTo(p2)) {
+          return false;
         }
+
       }
 
     }
@@ -474,12 +439,12 @@ public class DatabaseController implements DatabaseInterface {
   }
 
 
-  private boolean verify_points_update(){
+  private boolean verify_points_update() {
 
     boolean result;
     try {
       ArrayList<Point> db_points = getAllPoints();
-      result = compare_points_lists(db_points,localPoints);
+      result = compare_points_lists(db_points, localPoints);
     } catch (SQLException e) {
       System.out.println("Cannot complete verification of points, querry/connection error");
       e.printStackTrace();
@@ -489,11 +454,11 @@ public class DatabaseController implements DatabaseInterface {
     return result;
   }
 
-  private boolean verify_physicians_update(){
+  private boolean verify_physicians_update() {
     boolean result;
     try {
       ArrayList<Physician> db_physicians = getAllPhysicians();
-      result = compare_physicians_lists(db_physicians,localPhysicians);
+      result = compare_physicians_lists(db_physicians, localPhysicians);
     } catch (SQLException e) {
       System.out.println("Cannot complete verification of physicians, query/connection error");
       e.printStackTrace();
@@ -504,15 +469,16 @@ public class DatabaseController implements DatabaseInterface {
 
   }
 
-  private boolean save_and_verify(){
+  private boolean save_and_verify() {
     int c = 0;
-    while(c < 3){
+    while (c < 3) {
       c++;
       save();
-      if(! (verify_physicians_update() && verify_points_update())){
-        System.out.println("ERROR: verification failed, retrying to save");
+      if (!(verify_physicians_update() && verify_points_update())) {
+        System.out.println("ERROR: verification failed, retrying to save " + (3-c) + " more times" );
         save();
-      }else{
+      } else {
+        System.out.println("VERIFICATION SUCCEEDED");
         return true;
       }
     }
@@ -521,7 +487,7 @@ public class DatabaseController implements DatabaseInterface {
 
 
   @Override
-  public void load() throws SQLException{
+  public void load() throws SQLException {
     System.out.println("loading physicians and points from DB to local copies ");
     localPoints = getAllPoints();
     localPhysicians = getAllPhysicians();
@@ -537,7 +503,8 @@ public class DatabaseController implements DatabaseInterface {
       System.out.println("transferred local physicians copy");
     } catch (SQLException e) {
       //e.printStackTrace();
-      System.out.println("failed to transfer local physicians copy to DB; Error: " + e.getMessage());
+      System.out
+          .println("failed to transfer local physicians copy to DB; Error: " + e.getMessage());
     }
 
   }
@@ -547,8 +514,8 @@ public class DatabaseController implements DatabaseInterface {
     System.out.println("trying to get Points with names");
     ArrayList<Point> namedPoints = new ArrayList<Point>();
     int i;
-    for(i = 0;i < localPoints.size();i ++ ){
-      if(!(localPoints.get(i).getName().replaceAll("\\s","") == "")){
+    for (i = 0; i < localPoints.size(); i++) {
+      if (!(localPoints.get(i).getName().replaceAll("\\s", "") == "")) {
         namedPoints.add(localPoints.get(i));
       }
     }
@@ -559,12 +526,13 @@ public class DatabaseController implements DatabaseInterface {
   @Override
   public ArrayList<Point> getPoints() {
     try {
-      System.out.println("requesting points from DB, trying to load" );
+      System.out.println("requesting points from DB, trying to load");
       load();
-    }
-    catch (SQLException e){
+    } catch (SQLException e) {
       //e.printStackTrace();
-      System.out.println("Error Getting Data From The Database, failed to load, will return DB local points copy \n Query/Connection Error : " + e.getMessage());
+      System.out.println(
+          "Error Getting Data From The Database, failed to load, will return DB local points copy \n Query/Connection Error : "
+              + e.getMessage());
     }
     return localPoints;
   }
@@ -582,7 +550,9 @@ public class DatabaseController implements DatabaseInterface {
       System.out.println("requesting physicians from DB, trying to load");
       load();
     } catch (SQLException e) {
-      System.out.println("Error Getting Data From The Database, failed to load, will return DB local physicians copy \n Query/Connection Error : " + e.getMessage());
+      System.out.println(
+          "Error Getting Data From The Database, failed to load, will return DB local physicians copy \n Query/Connection Error : "
+              + e.getMessage());
       //e.printStackTrace();
     }
     return localPhysicians;
