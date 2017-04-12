@@ -15,26 +15,22 @@ public class Dictionary {
    */
   public Dictionary() {
     /* dictionary definition */
-    setupDictionary();
     stringEntryMap = new HashMap<String, Entry>();
-
     HashMap<Language, String> backLabel = new HashMap<Language, String>();
-    backLabel.put(Language.SPANISH, "Espalda");
+    backLabel.put(Language.SPANISH, "Volver");
     backLabel.put(Language.ENGLISH, "Back");
-    backLabel.put(Language.PORTUGESE, "Costas");
-    Entry e = new Entry(backLabel);
-    this.addEntry("Back", e);
+    backLabel.put(Language.PORTUGESE, "Volte");
+    Entry back = new Entry(backLabel);
+    this.addEntry("Back", back);
 
     HashMap<Language, String> usernameLabel = new HashMap<Language, String>();
-    usernameLabel = new HashMap<Language, String>();
     usernameLabel.put(Language.SPANISH, "Nombre de usuario");
     usernameLabel.put(Language.ENGLISH, "Username");
     usernameLabel.put(Language.PORTUGESE, "Nome de usuário");
-    Entry g = new Entry(usernameLabel);
-    this.addEntry("Username", g);
+    Entry username = new Entry(usernameLabel);
+    this.addEntry("Username", username);
 
     HashMap<Language, String> passwordLabel = new HashMap<Language, String>();
-    passwordLabel = new HashMap<Language, String>();
     passwordLabel.put(Language.SPANISH, "Contraseña");
     passwordLabel.put(Language.ENGLISH, "Password");
     passwordLabel.put(Language.PORTUGESE, "Palavra-passe");
@@ -42,7 +38,6 @@ public class Dictionary {
     this.addEntry("Password", password);
 
     HashMap<Language, String> mapLabel = new HashMap<Language, String>();
-    mapLabel = new HashMap<Language, String>();
     mapLabel.put(Language.SPANISH, "Mapa");
     mapLabel.put(Language.ENGLISH, "Map");
     mapLabel.put(Language.PORTUGESE, "Mapa");
@@ -50,7 +45,6 @@ public class Dictionary {
     this.addEntry("Map", map);
 
     HashMap<Language, String> loginLabel = new HashMap<Language, String>();
-    loginLabel = new HashMap<Language, String>();
     loginLabel.put(Language.SPANISH, "iniciar sesión");
     loginLabel.put(Language.ENGLISH, "Login");
     loginLabel.put(Language.PORTUGESE, "iniciar sessão");
@@ -58,7 +52,6 @@ public class Dictionary {
     this.addEntry("Login", login);
 
     HashMap<Language, String> searchLabel = new HashMap<Language, String>();
-    searchLabel = new HashMap<Language, String>();
     searchLabel.put(Language.SPANISH, "Buscar");
     searchLabel.put(Language.ENGLISH, "Search");
     searchLabel.put(Language.PORTUGESE, "Procurar");
@@ -66,15 +59,20 @@ public class Dictionary {
     this.addEntry("Search", search);
 
     HashMap<Language, String> floorLabel = new HashMap<Language, String>();
-    floorLabel = new HashMap<Language, String>();
     floorLabel.put(Language.SPANISH, "Piso");
     floorLabel.put(Language.ENGLISH, "Floor");
     floorLabel.put(Language.PORTUGESE, "Chão");
     Entry floor = new Entry(floorLabel);
     this.addEntry("Floor", floor);
 
+    HashMap<Language, String> floorColonLabel = new HashMap<Language, String>();
+    floorColonLabel.put(Language.SPANISH, "Piso:");
+    floorColonLabel.put(Language.ENGLISH, "Floor:");
+    floorColonLabel.put(Language.PORTUGESE, "Chão:");
+    Entry floorColon = new Entry(floorColonLabel);
+    this.addEntry("Floor:", floorColon);
+
     HashMap<Language, String> startLabel = new HashMap<Language, String>();
-    startLabel = new HashMap<Language, String>();
     startLabel.put(Language.SPANISH, "Comienzo");
     startLabel.put(Language.ENGLISH, "Start");
     startLabel.put(Language.PORTUGESE, "Começar");
@@ -82,7 +80,6 @@ public class Dictionary {
     this.addEntry("Start", start);
 
     HashMap<Language, String> endLabel = new HashMap<Language, String>();
-    endLabel = new HashMap<Language, String>();
     endLabel.put(Language.SPANISH, "Fin");
     endLabel.put(Language.ENGLISH, "End");
     endLabel.put(Language.PORTUGESE, "Fim");
@@ -90,7 +87,6 @@ public class Dictionary {
     this.addEntry("End", end);
 
     HashMap<Language, String> zoomLabel = new HashMap<Language, String>();
-    zoomLabel = new HashMap<Language, String>();
     zoomLabel.put(Language.SPANISH, "Zoom");
     zoomLabel.put(Language.ENGLISH, "Zoom");
     zoomLabel.put(Language.PORTUGESE, "Zoom");
@@ -98,7 +94,6 @@ public class Dictionary {
     this.addEntry("Zoom", zoom);
 
     HashMap<Language, String> selectedLabel = new HashMap<Language, String>();
-    selectedLabel = new HashMap<Language, String>();
     selectedLabel.put(Language.SPANISH, "Seleccionado");
     selectedLabel.put(Language.ENGLISH, "Selected");
     selectedLabel.put(Language.PORTUGESE, "Seleccionado");
@@ -106,7 +101,6 @@ public class Dictionary {
     this.addEntry("Selected", selected);
 
     HashMap<Language, String> goLabel = new HashMap<Language, String>();
-    goLabel = new HashMap<Language, String>();
     goLabel.put(Language.SPANISH, "Ir a");
     goLabel.put(Language.ENGLISH, "Go");
     goLabel.put(Language.PORTUGESE, "Go");
@@ -114,7 +108,6 @@ public class Dictionary {
     this.addEntry("Go", go);
 
     HashMap<Language, String> doneLabel = new HashMap<Language, String>();
-    doneLabel = new HashMap<Language, String>();
     doneLabel.put(Language.SPANISH, "Finalizar");
     doneLabel.put(Language.ENGLISH, "Done");
     doneLabel.put(Language.PORTUGESE, "Concluído");
@@ -122,7 +115,6 @@ public class Dictionary {
     this.addEntry("Done", done);
 
     HashMap<Language, String> showOnMapLabel = new HashMap<Language, String>();
-    showOnMapLabel = new HashMap<Language, String>();
     showOnMapLabel.put(Language.SPANISH, "Mostrar en el mapa");
     showOnMapLabel.put(Language.ENGLISH, "Show on Map");
     showOnMapLabel.put(Language.PORTUGESE, "Mostrar no mapa");
@@ -130,7 +122,6 @@ public class Dictionary {
     this.addEntry("Show on Map", showOnMap);
 
     HashMap<Language, String> n = new HashMap<Language, String>();
-    n = new HashMap<Language, String>();
     n.put(Language.SPANISH, "Ver información");
     n.put(Language.ENGLISH, "View Info");
     n.put(Language.PORTUGESE, "Ver informações");
@@ -138,7 +129,6 @@ public class Dictionary {
     this.addEntry("View Info", viewInfo);
 
     HashMap<Language, String> logOffLabel = new HashMap<Language, String>();
-    logOffLabel = new HashMap<Language, String>();
     logOffLabel.put(Language.SPANISH, "Cerrar sesión");
     logOffLabel.put(Language.ENGLISH, "Log off");
     logOffLabel.put(Language.PORTUGESE, "Terminar sessão");
@@ -146,7 +136,6 @@ public class Dictionary {
     this.addEntry("Log off", logOff);
 
     HashMap<Language, String> editMapLabel = new HashMap<Language, String>();
-    editMapLabel = new HashMap<Language, String>();
     editMapLabel.put(Language.SPANISH, "Editar Mapa");
     editMapLabel.put(Language.ENGLISH, "Edit Map");
     editMapLabel.put(Language.PORTUGESE, "Editar Mapa");
@@ -154,7 +143,6 @@ public class Dictionary {
     this.addEntry("Edit Map", editMap);
 
     HashMap<Language, String> createLabel = new HashMap<Language, String>();
-    createLabel = new HashMap<Language, String>();
     createLabel.put(Language.SPANISH, "Crear");
     createLabel.put(Language.ENGLISH, "Create");
     createLabel.put(Language.PORTUGESE, "Criar");
@@ -162,7 +150,6 @@ public class Dictionary {
     this.addEntry("Create", create);
 
     HashMap<Language, String> deleteLabel = new HashMap<Language, String>();
-    deleteLabel = new HashMap<Language, String>();
     deleteLabel.put(Language.SPANISH, "Eliminar");
     deleteLabel.put(Language.ENGLISH, "Delete");
     deleteLabel.put(Language.PORTUGESE, "Eliminar");
@@ -170,7 +157,6 @@ public class Dictionary {
     this.addEntry("Delete", delete);
 
     HashMap<Language, String> saveLabel = new HashMap<Language, String>();
-    saveLabel = new HashMap<Language, String>();
     saveLabel.put(Language.SPANISH, "Guardar");
     saveLabel.put(Language.ENGLISH, "Save");
     saveLabel.put(Language.PORTUGESE, "Guardar");
@@ -178,7 +164,6 @@ public class Dictionary {
     this.addEntry("Save", save);
 
     HashMap<Language, String> cancelLabel = new HashMap<Language, String>();
-    cancelLabel = new HashMap<Language, String>();
     cancelLabel.put(Language.SPANISH, "Cancelar");
     cancelLabel.put(Language.ENGLISH, "Cancel");
     cancelLabel.put(Language.PORTUGESE, "Cancelar");
@@ -186,7 +171,6 @@ public class Dictionary {
     this.addEntry("Cancel", cancel);
 
     HashMap<Language, String> searchDirectoryLabel = new HashMap<Language, String> ();
-    searchDirectoryLabel = new HashMap<Language, String> ();
     searchDirectoryLabel.put(Language.SPANISH, "Buscar en directorio");
     searchDirectoryLabel.put(Language.ENGLISH, "Search Directory");
     searchDirectoryLabel.put(Language.PORTUGESE, "Diretório de Pesquisa");
@@ -194,43 +178,81 @@ public class Dictionary {
     this.addEntry("Search Directory", searchDirectory);
 
     HashMap<Language, String> firstNameLabel = new HashMap<Language, String> ();
-    firstNameLabel = new HashMap<Language, String> ();
     firstNameLabel.put(Language.SPANISH, "Nombre de pila");
     firstNameLabel.put(Language.ENGLISH, "First Name");
-    firstNameLabel.put(Language.PORTUGESE, "Nome próprio");
+    firstNameLabel.put(Language.PORTUGESE, "Primeiro nome");
     Entry firstName = new Entry(firstNameLabel);
     this.addEntry("First Name", firstName);
 
     HashMap<Language, String> lastNameLabel = new HashMap<Language, String> ();
-    lastNameLabel = new HashMap<Language, String> ();
-    lastNameLabel.put(Language.SPANISH, "Apellidos");
+    lastNameLabel.put(Language.SPANISH, "Apellido");
     lastNameLabel.put(Language.ENGLISH, "Last Name");
-    lastNameLabel.put(Language.PORTUGESE, "Apelido");
+    lastNameLabel.put(Language.PORTUGESE, "Último nome");
     Entry lastName = new Entry(lastNameLabel);
     this.addEntry("Last Name", lastName);
 
     HashMap<Language, String> titleLabel = new HashMap<Language, String> ();
-    titleLabel = new HashMap<Language, String> ();
-    titleLabel.put(Language.SPANISH, "Puesto");
+    titleLabel.put(Language.SPANISH, "Profesión");
     titleLabel.put(Language.ENGLISH, "Title");
-    titleLabel.put(Language.PORTUGESE, "Cargo");
+    titleLabel.put(Language.PORTUGESE, "profissão");
     Entry title = new Entry(titleLabel);
     this.addEntry("Title", title);
 
     HashMap<Language, String> locationsLabel = new HashMap<Language, String> ();
-    locationsLabel = new HashMap<Language, String> ();
     locationsLabel.put(Language.SPANISH, "Ubicaciónes");
     locationsLabel.put(Language.ENGLISH, "Locations");
     locationsLabel.put(Language.PORTUGESE, "Localizações");
     Entry locations = new Entry(locationsLabel);
     this.addEntry("Locations", locations);
 
+    HashMap<Language, String> nameLabel = new HashMap<Language, String> ();
+    nameLabel.put(Language.SPANISH, "Nombre");
+    nameLabel.put(Language.ENGLISH, "Name");
+    nameLabel.put(Language.PORTUGESE, "Nome");
+    Entry name = new Entry(nameLabel);
+    this.addEntry("Name", name);
 
+    HashMap<Language, String> newButtonLabel = new HashMap<Language, String> ();
+    newButtonLabel.put(Language.SPANISH, "Nuevo");
+    newButtonLabel.put(Language.ENGLISH, "New");
+    newButtonLabel.put(Language.PORTUGESE, "Novo");
+    Entry newButton = new Entry(newButtonLabel);
+    this.addEntry("New", newButton);
 
+    HashMap<Language, String> updateSelectedLabel = new HashMap<Language, String> ();
+    updateSelectedLabel.put(Language.SPANISH, "Actualizar datos seleccionados");
+    updateSelectedLabel.put(Language.ENGLISH, "Update Selected");
+    updateSelectedLabel.put(Language.PORTUGESE, "Atualizar Selecionada");
+    Entry updateButton = new Entry(updateSelectedLabel);
+    this.addEntry("Update Selected", updateButton);
 
+    HashMap<Language, String> saveMapLabel = new HashMap<Language, String> ();
+    saveMapLabel.put(Language.SPANISH, "Guardar Mapa");
+    saveMapLabel.put(Language.ENGLISH, "Save Map");
+    saveMapLabel.put(Language.PORTUGESE, "Guardar Mapa");
+    Entry saveMap = new Entry(saveMapLabel);
+    this.addEntry("Save Map" , saveMap);
 
+    HashMap<Language, String> roomDetailsLabel = new HashMap<Language, String> ();
+    roomDetailsLabel.put(Language.SPANISH, "Detalles de las habitaciones");
+    roomDetailsLabel.put(Language.ENGLISH, "Room Details");
+    roomDetailsLabel.put(Language.PORTUGESE, "Detalhes do quarto");
+    Entry roomDetails = new Entry(roomDetailsLabel);
+    this.addEntry("Room Details" , roomDetails);
 
+    HashMap<Language, String> roomNameLabel = new HashMap<Language, String> ();
+    roomNameLabel.put(Language.SPANISH, "Nombre del salón");
+    roomNameLabel.put(Language.ENGLISH, "Room Name");
+    roomNameLabel.put(Language.PORTUGESE, "Nome da Sala");
+    Entry roomName = new Entry(roomNameLabel);
+    this.addEntry("Room Name" , roomName);
 
+    HashMap<Language, String> healthCareLabel = new HashMap<Language, String> ();
+    healthCareLabel.put(Language.SPANISH, "Proveedores de salud");
+    healthCareLabel.put(Language.ENGLISH, "Healthcare Providers");
+    healthCareLabel.put(Language.PORTUGESE, "Fornecedores de Cuidados de Saúde");
+    Entry HCP = new Entry(healthCareLabel);
+    this.addEntry("Healthcare Providers" , HCP);
 
   }
 
@@ -256,21 +278,4 @@ public class Dictionary {
     return info.getString(language);
   }
 
-  public void setupDictionary () {
-    stringEntryMap = new HashMap<String, Entry>();
-    HashMap<Language, String> h = new HashMap<Language, String>();
-    h.put(Language.SPANISH, "Espalda");
-    h.put(Language.ENGLISH, "Back");
-    h.put(Language.PORTUGESE, "Costas");
-    Entry e = new Entry(h);
-    this.addEntry("Back", e);
-
-
-    HashMap<Language, String> s = new HashMap<Language, String>();
-    s.put(Language.SPANISH, "Nombre de usuario");
-    s.put(Language.ENGLISH, "Username");
-    s.put(Language.PORTUGESE, "Nome de usuário");
-    Entry g = new Entry(s);
-    this.addEntry("Username", g);
-  }
 }

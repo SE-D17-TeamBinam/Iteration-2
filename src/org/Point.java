@@ -130,4 +130,17 @@ public class Point {
     double y = End.yCoord - this.yCoord;
     return (int) Math.sqrt(x*x + y*y);
   }
+
+  public void setID(int ID) {
+    this.id = ID;
+  }
+
+  public boolean isElevator(){
+    return false;
+  }
+
+  public boolean isStair(){
+    return false;
+  }
+
 }

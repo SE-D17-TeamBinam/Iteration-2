@@ -33,9 +33,9 @@
             </Button>
             <Pane fx:id="SearchPane" layoutX="325.0" layoutY="320.0" prefHeight="365.0" prefWidth="650.0">
                <children>
-                  <Button id="SearchInfo" layoutX="535.0" layoutY="315.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" text="  View Info -&gt;" />
+                  <Button id="SearchInfo" fx:id="SearchInfo" layoutX="493.0" layoutY="315.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="157.0" text="  View Info -&gt;" />
                   <ListView fx:id="SearchDirectory" maxHeight="305.0" maxWidth="650.0" prefHeight="305.0" prefWidth="650.0" />
-                  <Button id="SearchMap" layoutX="410.0" layoutY="315.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" text="Show on Map" />
+                  <Button id="SearchMap" fx:id="SearchMap" layoutX="326.0" layoutY="315.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="157.0" text="Show on Map" />
                </children>
             </Pane>
          </children>

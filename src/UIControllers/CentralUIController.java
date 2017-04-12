@@ -1,6 +1,9 @@
 package UIControllers;
 
 import CredentialManager.CredentialManager;
+import Database.DatabaseController;
+import Database.DatabaseDriver;
+import Database.DatabaseInterface;
 import java.util.ArrayList;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -24,7 +27,6 @@ public class CentralUIController {
     3 for admin map
    */
   protected static int mapViewFlag = 0;
-  public static ArrayList<Point> globalPoints = new ArrayList<Point>(); // TODO Fix
   protected static Session currSession;
   protected static CredentialManager credentialManager;
   protected static Dictionary dictionary;
@@ -36,11 +38,14 @@ public class CentralUIController {
   protected static ImageView bannerView = new ImageView();
   protected static ImageView backgroundView = new ImageView();
   protected static ImageView logoView = new ImageView();
+  protected static DatabaseInterface database;
 
-  public void setSession (Session s) {
+
+  public void setSession (Session s, DatabaseInterface dbe) {
     this.currSession = s;
     this.credentialManager = s.credentialManager;
     this.dictionary = s.dictionary;
+    this.database = dbe;
   }
   /**
    * Set the stage to the initial scene (main menu)
@@ -110,5 +115,11 @@ public class CentralUIController {
     logoView.toBack();
     bannerView.toBack();
     backgroundView.toBack();
+  }
+
+  public void addDB(DatabaseInterface db){
+//    this.database = db;
+
+    System.out.println(db == null);
   }
 }
