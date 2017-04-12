@@ -523,8 +523,8 @@ public class DatabaseController implements DatabaseInterface {
   @Override
   public void load() throws SQLException{
     System.out.println("loading physicians and points from DB to local copies ");
-    localPhysicians = getAllPhysicians();
     localPoints = getAllPoints();
+    localPhysicians = getAllPhysicians();
   }
 
   @Override
