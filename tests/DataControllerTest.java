@@ -26,6 +26,10 @@ public class DataControllerTest {
    * This needs to be adjusted for the refactor
    */
 
+  @Test
+  public void TTSTest(){
+    DataController.textToSpeech("Hello World! Hello World! Hello World! Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!");
+  }
 //  @BeforeEach
 //  public void setup(){
 //    p1 = new Point(42, 50, "Begin", 0, neigh, 4);
