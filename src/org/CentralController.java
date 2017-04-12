@@ -1,5 +1,6 @@
 package org;
 
+import Database.DatabaseInterface;
 import UIControllers.CentralUIController;
 import javafx.stage.Stage;
 
@@ -15,9 +16,9 @@ public class CentralController {
   public CentralController(){
   }
 
-  public void startUI (Stage primaryStage) throws Exception {
+  public void startUI (Stage primaryStage, DatabaseInterface dbe) throws Exception {
     this.uiController = new CentralUIController();
-    uiController.setSession(currSession);
+    uiController.setSession(currSession, dbe);
     uiController.restartUI(primaryStage);
   }
 

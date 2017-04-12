@@ -33,9 +33,9 @@
                <font>
                   <Font size="20.0" />
                </font></PasswordField>
-            <Button fx:id="AdminLoginButton" layoutX="593.0" layoutY="550.0" mnemonicParsing="false" onKeyPressed="#tryLogin" onMouseClicked="#login" prefHeight="65.0" prefWidth="115.0" text="Login">
+            <Button fx:id="AdminLoginButton" layoutX="575.0" layoutY="550.0" mnemonicParsing="false" onKeyPressed="#tryLogin" onMouseClicked="#login" prefHeight="65.0" prefWidth="150.0" text="Login">
                <font>
-                  <Font size="30.0" />
+                  <Font size="20.0" />
                </font></Button>
             <Label fx:id="LoginError" layoutX="478.0" layoutY="478.0" text="Error: Incorrect username/password combination" textFill="RED" visible="false">
                <font>

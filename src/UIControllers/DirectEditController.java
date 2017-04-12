@@ -2,6 +2,7 @@ package UIControllers;
 
 import Definitions.Physician;
 import javafx.scene.layout.AnchorPane;
+import org.Language;
 import org.Point;
 import java.net.URL;
 import java.util.ArrayList;
@@ -55,6 +56,8 @@ public class DirectEditController extends CentralUIController implements Initial
   @FXML
   private Button DirectBack;
   @FXML
+  private Button DirectEditMap;
+  @FXML
   private Label DirectFirstName;
   @FXML
   private Label DirectLastName;
@@ -75,7 +78,7 @@ public class DirectEditController extends CentralUIController implements Initial
 
   @Override
   public void customListenerX () {
-    DirectLogoff.setLayoutX(x_res - 155);
+    DirectLogoff.setLayoutX(x_res - DirectLogoff.getPrefWidth() - 5);
   }
   @Override
   public void customListenerY () {
@@ -84,34 +87,34 @@ public class DirectEditController extends CentralUIController implements Initial
 
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    if (currSession.getLanguage() == Language.SPANISH) {
+      DirectLogoff.setPrefWidth(200);
+    } else if (currSession.getLanguage() == Language.PORTUGESE) {
+      DirectLogoff.setPrefWidth(240);
+    } else {
+        DirectLogoff.setPrefWidth(150);
+    }
     addResolutionListener(anchorPane);
     setBackground(anchorPane);
 
-    rooms = new ArrayList<>();
-    docs = new ArrayList<>();
+    /* apply language configs */
+    DirectBack.setText(dictionary.getString("Back", currSession.getLanguage()));
+    DirectFirstName.setText(dictionary.getString("First Name", currSession.getLanguage()));
+    DirectLastName.setText(dictionary.getString("Last Name", currSession.getLanguage()));
+    DirectTitle.setText(dictionary.getString("Title", currSession.getLanguage()));
+    DirectCancel.setText(dictionary.getString("Cancel",currSession.getLanguage()));
+    DirectCreate.setText(dictionary.getString("Create", currSession.getLanguage()));
+    DirectDelete.setText(dictionary.getString("Delete", currSession.getLanguage()));
+    DirectLocations.setText(dictionary.getString("Locations", currSession.getLanguage()));
+    DirectSave.setText(dictionary.getString("Save", currSession.getLanguage()));
+    DirectLogoff.setText(dictionary.getString("Log off", currSession.getLanguage()));
+    DirectEditMap.setText(dictionary.getString("Edit Map", currSession.getLanguage()));
+
+
+    rooms = database.getNamedPoints();
+    docs = database.getPhysicians();
     roomNames = new ArrayList<>();
     docNames = new ArrayList<>();
-    // get list of rooms
-    Point a1 = new Point(0, 0, "a");
-    Point a2 = new Point(0, 0, "b");
-    Point a3 = new Point(0, 0, "c");
-    Point a4 = new Point(0, 0, "d");
-    Point a5 = new Point(0, 0, "e");
-    Point a6 = new Point(0, 0, "f");
-    rooms.add(a1);
-    rooms.add(a2);
-    rooms.add(a3);
-    rooms.add(a4);
-    rooms.add(a5);
-    rooms.add(a6);
-    Physician b1 = new Physician("A", "B", "Nurse", 0, rooms);
-    Physician b2 = new Physician("C", "D", "Nurse", 1, rooms);
-    Physician b3 = new Physician("E", "F", "Nurse", 2, rooms);
-    Physician b4 = new Physician("G", "H", "Nurse", 3, rooms);
-    docs.add(b1);
-    docs.add(b2);
-    docs.add(b3);
-    docs.add(b4);
 
     // load all docs
     refreshDir();
@@ -192,7 +195,8 @@ public class DirectEditController extends CentralUIController implements Initial
   private void refreshDir () {
     docNames = new ArrayList<>();
     for (Physician doc : docs) {
-      String aDoc = doc.getFirstName() + ", " + doc.getLastName() + " " + Long.toString(doc.getID());
+      String aDoc = doc.getFirstName() + ", " + doc.getLastName() +
+          ", Title: " + doc.getTitle() + " ID: " + Long.toString(doc.getID());
       docNames.add(aDoc);
     }
     // and fill the directory
@@ -248,7 +252,7 @@ public class DirectEditController extends CentralUIController implements Initial
       refreshInfo();
       refreshDir();
       Directory.getSelectionModel().select(selectedHPIndex);
-
+      database.setPhysicians(docs);
     } catch (NullPointerException e) {
       System.out.println("Nothing is selected");
     }
@@ -265,7 +269,12 @@ public class DirectEditController extends CentralUIController implements Initial
 
   public void create () {
     Directory.getSelectionModel().select(-1);
-    long newPID = docs.get(docs.size() - 1).getID() + 1;
+    long newPID;
+    try {
+      newPID = docs.get(docs.size() - 1).getID() + 1;
+    } catch (ArrayIndexOutOfBoundsException e) {
+      newPID = 1;
+    }
     selectedHP = new Physician("", "", "", newPID, new ArrayList<>());
     selectedHPIndex = docs.size();
     refreshInfo();
