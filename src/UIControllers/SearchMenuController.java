@@ -78,7 +78,7 @@ public class SearchMenuController extends CentralUIController implements Initial
       String newDoc = doctor.getLastName() + ", " + doctor.getFirstName() + ", " + doctor.getTitle()
           + "\nLocations: ";
       for (int i = 0; i < doctor.getLocations().size(); i++) {
-        newDoc = newDoc + doctor.getLocations().get(i);
+        newDoc = newDoc + doctor.getLocations().get(i).getName();
         if (i < doctor.getLocations().size() - 1){
           newDoc = newDoc + ", ";
         }
