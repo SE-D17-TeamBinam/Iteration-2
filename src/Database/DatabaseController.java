@@ -392,7 +392,134 @@ public class DatabaseController implements DatabaseInterface {
 
 
 
-  ///EXTRA DB METHODS
+
+  ///////////////////////
+  ////EXTRA DB METHODS///
+  ///////////////////////
+
+  private boolean compare_physicians_lists(ArrayList<Physician> l1,ArrayList<Physician> l2){
+    int i,j;
+    if(l1.size() != l2.size()){
+      return false;
+    }else{
+      Physician p1,p2;
+      for(i = 0;i < l1.size();i++){
+        for(j = 0;j < l2.size();j++){
+          int k,l;
+          p1 = l1.get(i);
+          p2 = l2.get(j);
+          if(p1.getTitle().compareTo(p2.getTitle()) == 0 && p1.getFirstName().compareTo(p2.getFirstName()) == 0 &&
+              p1.getLastName().compareTo(p2.getLastName()) == 0 && p1.getID() == p2.getID()){
+
+            FakePhysician p3 = new FakePhysician(p1);
+            FakePhysician p4 = new FakePhysician(p2);
+            for(k = 0;k < p3.getLocations().size();k++){
+              for(l = 0;l < p4.getLocations().size();l++){
+                if(! (p3.getLocations().contains(p4.getLocations().get(l))) ){
+                  return false;
+                }
+
+              }
+            }
+
+          }else{
+            return false;
+          }
+
+        }
+      }
+
+    }
+
+    return true;
+  }
+
+
+  private boolean compare_points_lists(ArrayList<Point> l1,ArrayList<Point> l2){
+    int i,j;
+    if(l1.size() != l2.size()){
+      return false;
+    }else{
+      Point p1,p2;
+      for(i = 0;i < l1.size();i++){
+        for(j = 0;j < l2.size();j++){
+          int k,l;
+          p1 = l1.get(i);
+          p2 = l2.get(j);
+          if(p1.getName().compareTo(p2.getName()) == 0 && p1.getCost() == p2.getCost() &&
+              p1.getFloor() == p2.getFloor() && p1.getId() == p2.getId() &&
+              p1.getXCoord() == p2.getYCoord()){
+
+            FakePoint p3 = new FakePoint(p1);
+            FakePoint p4 = new FakePoint(p2);
+            for(k = 0;k < p3.getNeighbors().size();k++){
+              for(l = 0;l < p4.getNeighbors().size();l++){
+                if(! (p3.getNeighbors().contains(p4.getNeighbors().get(l))) ){
+                    return false;
+                }
+
+              }
+            }
+
+          }else{
+            return false;
+          }
+
+        }
+      }
+
+    }
+
+    return true;
+  }
+
+
+  private boolean verify_points_update(){
+
+    boolean result;
+    try {
+      ArrayList<Point> db_points = getAllPoints();
+      result = compare_points_lists(db_points,localPoints);
+    } catch (SQLException e) {
+      System.out.println("Cannot complete verification of points, querry/connection error");
+      e.printStackTrace();
+      return false;
+    }
+
+    return result;
+  }
+
+  private boolean verify_physicians_update(){
+    boolean result;
+    try {
+      ArrayList<Physician> db_physicians = getAllPhysicians();
+      result = compare_physicians_lists(db_physicians,localPhysicians);
+    } catch (SQLException e) {
+      System.out.println("Cannot complete verification of physicians, query/connection error");
+      e.printStackTrace();
+      return false;
+    }
+
+    return result;
+
+  }
+
+  private boolean save_and_verify(){
+    int c = 0;
+    while(c < 3){
+      c++;
+      save();
+      if(! (verify_physicians_update() && verify_points_update())){
+        System.out.println("ERROR: verification failed, retrying to save");
+        save();
+      }else{
+        return true;
+      }
+    }
+    return false;
+  }
+
+
   @Override
   public void load() throws SQLException{
     System.out.println("loading physicians and points from DB to local copies ");
@@ -412,6 +539,7 @@ public class DatabaseController implements DatabaseInterface {
       //e.printStackTrace();
       System.out.println("failed to transfer local physicians copy to DB; Error: " + e.getMessage());
     }
+
   }
 
   @Override
@@ -445,7 +573,7 @@ public class DatabaseController implements DatabaseInterface {
   public void setPoints(ArrayList<Point> points) {
     System.out.println("Setting the DB local points copy");
     localPoints = points;
-    save();
+    save_and_verify();
   }
 
   @Override
@@ -464,7 +592,7 @@ public class DatabaseController implements DatabaseInterface {
   public void setPhysicians(ArrayList<Physician> physicians) {
     System.out.println("Setting the DB local physicians copy");
     localPhysicians = physicians;
-    save();
+    save_and_verify();
   }
 
 }

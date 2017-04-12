@@ -25,6 +25,17 @@ public class FakePhysician {
     this.locations = locations;
   }
 
+  public FakePhysician(Physician real_physician) {
+    this.locations = new ArrayList<Integer>();
+    this.firstName = real_physician.getFirstName();
+    this.lastName = real_physician.getLastName();
+    this.title = real_physician.getTitle();
+    this.PID = real_physician.getID();
+    for(int i= 0;i < real_physician.getLocations().size();i++){
+      this.locations.add(real_physician.getLocations().get(i).getId());
+    }
+  }
+
   public String getFirstName () {
     return this.firstName;
   }
