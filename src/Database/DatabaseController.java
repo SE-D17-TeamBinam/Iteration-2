@@ -550,7 +550,8 @@ public class DatabaseController implements DatabaseInterface {
   public void setPoints(ArrayList<Point> points) {
     System.out.println("Setting the DB local points copy");
     localPoints = points;
-    save_and_verify();
+    //save_and_verify();
+    save();
   }
 
   @Override
@@ -571,7 +572,8 @@ public class DatabaseController implements DatabaseInterface {
   public void setPhysicians(ArrayList<Physician> physicians) {
     System.out.println("Setting the DB local physicians copy");
     localPhysicians = physicians;
-    save_and_verify();
+    //save_and_verify();
+    save();
   }
 
 }
